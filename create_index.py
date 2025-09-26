@@ -29,13 +29,13 @@ class Category:
 
     def render(self, lang):
         self.articles.sort(key=lambda a: a.title)
-        template = Template(Path(f'{lang}/categories/category_template.html').read_text(**utf8))
+        template = Template(Path(f'templates/{lang}/category_template.html').read_text(**utf8))
         rendered = template.render({
             'category_name': self.name,
             'n_articles': len(self.articles),
             'list_article': _render_articles(self.articles, rel_path_to_lang_root='../'),
         }) + '\n'
-        Path(f'{lang}/{self.path}').write_text(rendered, newline='\n', **utf8)
+        Path(f'site/{lang}/{self.path}').write_text(rendered, newline='\n', **utf8)
 
 
 def _render_articles(articles, n_max=None, rel_path_to_lang_root=''):
@@ -50,26 +50,34 @@ def _render_articles(articles, n_max=None, rel_path_to_lang_root=''):
     return str(list_article)
 
 
+def _validate_and_get_title(soup):
+    for tag in soup.find_all(True):
+        if tag.has_attr('style'):
+            print(f'[WARNING] インラインスタイルがある {article_path.as_posix()}')
+    for a in soup.find_all('a'):
+        if a.has_attr('target'):
+            print(f'[WARNING] target 属性がある {article_path.as_posix()}')
+    title = soup.find('h1').get_text()
+    page_title = soup.title.get_text()
+    if page_title != f'{title} - Cookie Box':
+        print(f'[WARNING] ページタイトルと記事見出しが不一致 {article_path.as_posix()}')
+    return title
+
+
 def _get_info(lang):
     # 記事の収集
     d_cat = {}
     articles = []
-    article_paths = Path(f'{lang}/articles').glob('*.html')
+    article_paths = Path(f'site/{lang}/articles').glob('*.html')
     for article_path in article_paths:
         rc = subprocess.run(['git', 'diff', '--quiet', '--', article_path.as_posix()])
         if rc == 1:
-            print(f'[WARNING] {article_path.as_posix()} の変更はステージされていません')
-        if article_path.name.startswith('article_template'):
-            continue
+            print(f'[WARNING] 未ステージの変更 {article_path.as_posix()}')
         soup = BeautifulSoup(article_path.read_text(**utf8), 'html.parser')
-
-        for a in soup.find_all('a'):  # a タグに target 属性がないかの確認
-            if a.has_attr('target'):
-                print(f'[WARNING] target 属性があります {article_path.as_posix()}')
-
+        title = _validate_and_get_title(soup)
         article = Article(
-            title=soup.find('h1').get_text(),
-            path=article_path.as_posix().replace(f'{lang}/', ''),
+            title=title,
+            path=article_path.as_posix().replace(f'site/{lang}/', ''),
             timestamp=datetime.datetime.fromtimestamp(
                 article_path.stat().st_mtime
             ).strftime('%Y-%m-%d'),
@@ -103,16 +111,14 @@ def _get_info(lang):
     for cat in d_cat.values():
         cat.render(lang)  # カテゴリページ作成
         set_cat_path.add(cat.path)
-        subprocess.run(['git', 'add', f'{lang}/{cat.path}'])
+        subprocess.run(['git', 'add', f'site/{lang}/{cat.path}'])
         elm = Elm('li', Elm('a', f'Category:{cat.name}').set_attr('href', cat.path))
         list_category.append(elm)
 
     # カテゴリページのクリーンアップ
-    category_paths = Path(f'{lang}/categories').glob('*.html')
+    category_paths = Path(f'site/{lang}/categories').glob('*.html')
     for category_path in category_paths:
-        if category_path.name == 'category_template.html':
-            continue
-        if category_path.as_posix().replace(f'{lang}/', '') not in set_cat_path:
+        if category_path.as_posix().replace(f'site/{lang}/', '') not in set_cat_path:
             print(f'[WARNING] {lang}/{cat.path} をアンステージ＆削除してください')
 
     return {
@@ -124,12 +130,12 @@ def _get_info(lang):
     }
 
 
-def index(lang='ja'):
-    template = Template(Path(f'{lang}/index_template.html').read_text(**utf8))
+def create_index(lang='ja'):
+    template = Template(Path(f'templates/{lang}/index_template.html').read_text(**utf8))
     rendered = template.render(_get_info(lang)) + '\n'
-    Path(f'{lang}/index.html').write_text(rendered, newline='\n', **utf8)
-    subprocess.run(['git', 'add', f'{lang}/index.html'])
+    Path(f'site/{lang}/index.html').write_text(rendered, newline='\n', **utf8)
+    subprocess.run(['git', 'add', f'site/{lang}/index.html'])
 
 
 if __name__ == '__main__':
-    index()
+    create_index()

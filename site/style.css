@@ -188,8 +188,14 @@ ol.note > li:before {
   counter-increment: li;
   content: '[注釈'counter(li)']';
 }
-li.chocolate::marker {
+ul.chocolate > li {
+  position: relative;
+  list-style: none;
+}
+ul.chocolate > li::before {
+  position: absolute;
   content: '\01f36b ';
+  left: -1.5em;
 }
 ol.small {
   font-size: 88%;

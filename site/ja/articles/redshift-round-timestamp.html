@@ -41,8 +41,8 @@
 <h2>タイムスタンプを直前の月曜日に丸める</h2>
 
 Redshift の DOW (曜日番号) は日曜日が 0, ..., 土曜日が 6 なので、日曜日以外は DOW - 1 日前の日付をとれば月曜日になる。日曜日は 6 日前の日付をとれば月曜日になる。よって、すべての日について (DOW + 6) % 7 日前をとれば月曜日になる。
-<ul>
-<li class="chocolate">なお、ISODOW (ISO 8601 規格の曜日) なら月曜日が 1, ..., 日曜日が 7 なので常に ISODOW - 1 日前をとれば月曜日になるが、Redshift は ISODOW に対応していない。</li>
+<ul class="chocolate">
+<li>なお、ISODOW (ISO 8601 規格の曜日) なら月曜日が 1, ..., 日曜日が 7 なので常に ISODOW - 1 日前をとれば月曜日になるが、Redshift は ISODOW に対応していない。</li>
 </ul>
 
 <pre class="language-sql"><code>
@@ -78,7 +78,7 @@ ts_utc,                 week_utc
 
 もしデータベースに格納されているタイムスタンプが目的のタイムゾーンの時刻ではない場合は、DOW をとる前に目的のタイムゾーンの時刻にする必要があることに注意 (以下: 日本時間にするとテストデータの4行目は丸め先が変わる)。
 <ul>
-<li class="chocolate">AT TIME ZONE 関数はタイムゾーン付きタイムスタンプ TIMESTAMPTZ 型をタイムゾーンなしタイムスタンプ TIMESTAMP 型にするが、どちらも EXTRACT 関数で曜日番号を抽出できる。</li>
+<li>AT TIME ZONE 関数はタイムゾーン付きタイムスタンプ TIMESTAMPTZ 型をタイムゾーンなしタイムスタンプ TIMESTAMP 型にするが、どちらも EXTRACT 関数で曜日番号を抽出できる。</li>
 </ul>
 
 <pre class="language-sql"><code>
@@ -105,7 +105,7 @@ ts_jst,              week_jst
 
 より一般に、基準日から N 日ごとにデータを区切るためにタイムスタンプを丸めたいときは、DATEDIFF 関数 (日付の差を返す) を利用して、DATEDIFF % N 日前の日付をとればよい。
 <ul>
-<li class="chocolate">以下では基準日をタイムゾーンなしタイムスタンプ TIMESTAMP 型として与え、DATEDIFF をとるときはデータ側も TIMESTAMP 型にキャストしている。</li>
+<li>以下では基準日をタイムゾーンなしタイムスタンプ TIMESTAMP 型として与え、DATEDIFF をとるときはデータ側も TIMESTAMP 型にキャストしている。</li>
 </ul>
 
 <pre class="language-sql"><code>
