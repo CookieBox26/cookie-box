@@ -1,3 +1,12 @@
+# /// script
+# requires-python = "==3.11.*"
+# dependencies = [
+#     "beautifulsoup4",
+#     "jinja2",
+#     "shirotsubaki",
+# ]
+# ///
+
 from shirotsubaki.element import Element as Elm
 from jinja2 import Template
 from bs4 import BeautifulSoup
