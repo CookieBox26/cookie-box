@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:
+Sitemap: https://cookie-box.info/sitemap.xml

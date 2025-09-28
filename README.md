@@ -8,4 +8,4 @@ Create or modify the file at `site/ja/articles/xxxxxx.html`.
 
 ### Generating Index and Category Pages
 
-Run `create_index.py`.
+Run `build.py`.
