@@ -10,5 +10,4 @@ jobs:
           git fetch --no-tags --depth=1 origin ${{ github.sha }}
           git checkout --detach ${{ github.sha }}
       - run: pipx install uv
-      - run: uv sync
       - run: uv run build.py
