@@ -59,8 +59,8 @@ class Page:
     def generate(self, template, context):
         rendered = template.render(context) + '\n'
         self.path.write_text(rendered, newline='\n', encoding='utf8')
-        self.eval()
         print(f'生成済み {self.path}')
+        self.eval()
 
     def as_anchor(self, source_path, with_ts=False):
         rel_path = Path(os.path.relpath(self.path, source_path.parent)).as_posix()
@@ -121,11 +121,11 @@ class Article(Page):
                 cat_path = (path.parent / Path(cat['href'])).resolve()
                 if cat_name not in all_cats:
                     if cat_path in all_cat_paths:
-                        ValueError(f'カテゴリ名のゆれ {path}')
+                        raise ValueError(f'カテゴリ名のゆれ {path}')
                     all_cats[cat_name] = Category(cat_name, cat_path)
                     all_cat_paths.add(cat_path)
                 elif cat_path != all_cats[cat_name].path:
-                    ValueError(f'カテゴリページパスのゆれ {path}')
+                    raise ValueError(f'カテゴリページパスのゆれ {path}')
                 all_cats[cat_name].articles.append(self)
 
 
@@ -136,6 +136,7 @@ class IndexPage(Page):
         all_cat_paths = set()
 
         # 記事ページ収集
+        print('[INFO] 記事ページ収集')
         self.articles = []
         article_dir = self.path.parent / 'articles'
         for article_path in article_dir.glob('*.html'):
@@ -147,6 +148,7 @@ class IndexPage(Page):
         list_article = Page.as_ul_of_links(self.articles, self.path, with_ts=True)
 
         # カテゴリページ生成
+        print('[INFO] カテゴリページ生成')
         self.all_cats = list(all_cats.values())
         self.all_cats.sort(key=lambda c: c.cat_name)
         cat_template_path = lang_template_root / 'category_template.html'
@@ -162,6 +164,7 @@ class IndexPage(Page):
                 print(f'[WARNING] {cat_path} をアンステージ＆削除してください')
 
         # 目次ページ自身の生成
+        print('[INFO] 目次ページ生成')
         template_path = lang_template_root / 'index_template.html'
         template = Template(template_path.read_text(encoding='utf8'))
         context = {
@@ -179,6 +182,7 @@ class IndexPage(Page):
 
 class Sitemap:
     def __init__(self, domain, site_root, pages):
+        print('[INFO] サイトマップ生成')
         sitemap_path = site_root / 'sitemap.xml'
         lines = [
             '<?xml version="1.0" encoding="UTF-8"?>',
@@ -187,6 +191,7 @@ class Sitemap:
             '</urlset>',
         ]
         sitemap_path.write_text('\n'.join(lines) + '\n', newline='\n', encoding='utf8')
+        print(f'生成済み {sitemap_path}')
 
 
 if __name__ == '__main__':
@@ -198,4 +203,6 @@ if __name__ == '__main__':
     site_root = Path(__file__).resolve().parent / 'site'
     Sitemap(domain, site_root, index_ja.get_pages())
 
-    print(_run(['git', 'status']))
+    ret = _run(['git', 'status', '-s'])
+    if ret != '':
+        raise ValueError(f'[WARNING] ヘッドコミットとワークツリーに差分\n{ret}')
