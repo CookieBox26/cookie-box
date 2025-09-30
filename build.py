@@ -11,15 +11,20 @@ from shirotsubaki.element import Element as Elm
 from jinja2 import Template
 from bs4 import BeautifulSoup
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
+import subprocess
 import os
+
+
+def _run(command):
+    ret = subprocess.run(command, capture_output=True, text=True, check=True).stdout.strip()
+    return ret[1:-1] if len(ret) >= 2 and ret[0] == ret[-1] == '"' else ret
 
 
 class Page:
     site_name = 'Cookie Box'
 
     def eval(self):
-        self.timestamp = datetime.fromtimestamp(self.path.stat().st_mtime).strftime('%Y-%m-%d')
         soup = BeautifulSoup(self.path.read_text(encoding='utf8'), 'html.parser')
         self.title = soup.find('h1').get_text()
         page_title = soup.title.get_text()
@@ -35,6 +40,16 @@ class Page:
         for a in soup.find_all('a'):
             if a.has_attr('target'):
                 raise ValueError(f'a タグに target 属性がある {self.path}')
+
+        # self.timestamp = datetime.fromtimestamp(self.path.stat().st_mtime).strftime('%Y-%m-%d')
+        status = _run(['git', 'status', '-s', self.path])
+        if status == '':
+            self.timestamp = _run(['git', 'log', '-1', '--format="%ad"', '--date=short', self.path])
+        else:
+            now = datetime.utcnow() + timedelta(hours=9)
+            self.timestamp = now.strftime('%Y-%m-%d')
+        print(self.timestamp, self.title)
+
         return soup
 
     def __init__(self, path, is_index=False):
@@ -182,3 +197,5 @@ if __name__ == '__main__':
     domain = 'https://cookie-box.info/'
     site_root = Path(__file__).resolve().parent / 'site'
     Sitemap(domain, site_root, index_ja.get_pages())
+
+    print(_run(['git', 'status']))
