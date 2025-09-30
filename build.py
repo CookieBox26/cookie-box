@@ -21,6 +21,40 @@ def _run(command):
     return ret[1:-1] if len(ret) >= 2 and ret[0] == ret[-1] == '"' else ret
 
 
+def _write_text(path, text):
+    if path.exists():
+        current_text = path.read_text(encoding='utf8')
+        if current_text == text:
+            print(f'更新なし {path}')
+            return
+        print(f'更新あり {path}')
+    else:
+        print(f'新規作成 {path}')
+    path.write_text(text, newline='\n', encoding='utf8')
+
+
+def _validate_and_collect_page_paths(path, files_allowed, subdirs_allowed, collect_page=True):
+    """
+    無許可のファイルやサブディレクトリがないか確認しながら .html ファイルを収集します
+    逆に allowed なファイルやサブディレクトリが存在するかは確認しません
+    コミット漏れは git status -s で防いでください
+    """
+    page_paths = []
+    for child in path.iterdir():
+        if child.is_dir() and child.name not in subdirs_allowed:
+            raise ValueError(f'不要なサブディレクトリがある {child}')
+        if child.is_file() and child.name not in files_allowed:
+            if collect_page and child.suffix.lower() == '.html':
+                page_paths.append(child)
+            else:
+                raise ValueError(f'不要なファイルがある {child}')
+    return page_paths
+
+
+def _validate(path, files_allowed, subdirs_allowed):
+    _validate_and_collect_page_paths(path, files_allowed, subdirs_allowed, collect_page=False)
+
+
 class Page:
     site_name = 'Cookie Box'
 
@@ -41,11 +75,10 @@ class Page:
             if a.has_attr('target'):
                 raise ValueError(f'a タグに target 属性がある {self.path}')
 
-        # self.timestamp = datetime.fromtimestamp(self.path.stat().st_mtime).strftime('%Y-%m-%d')
         status = _run(['git', 'status', '-s', self.path])
-        if status == '':
+        if status == '':  # 最新コミットとワークツリーが一致していれば最新コミット日
             self.timestamp = _run(['git', 'log', '-1', '--format="%ad"', '--date=short', self.path])
-        else:
+        else:  # 最新コミットとステージ済またはワークツリーが不一致ならこのスクリプトの実行日
             now = datetime.utcnow() + timedelta(hours=9)
             self.timestamp = now.strftime('%Y-%m-%d')
         print(self.timestamp, self.title)
@@ -58,8 +91,7 @@ class Page:
 
     def generate(self, template, context):
         rendered = template.render(context) + '\n'
-        self.path.write_text(rendered, newline='\n', encoding='utf8')
-        print(f'生成済み {self.path}')
+        _write_text(self.path, rendered)
         self.eval()
 
     def as_anchor(self, source_path, with_ts=False):
@@ -139,7 +171,7 @@ class IndexPage(Page):
         print('[INFO] 記事ページ収集')
         self.articles = []
         article_dir = self.path.parent / 'articles'
-        for article_path in article_dir.glob('*.html'):
+        for article_path in _validate_and_collect_page_paths(article_dir, [], []):
             article = Article(article_path, all_cats, all_cat_paths)
             self.articles.append(article)
         self.articles.sort(key=lambda a: a.timestamp, reverse=True)
@@ -157,11 +189,11 @@ class IndexPage(Page):
             cat.generate(cat_template)
         list_category = Page.as_ul_of_links(self.all_cats, self.path)
 
-        # カテゴリページのクリーンアップ
+        # 廃れたカテゴリページがないことの確認
         cat_dir = self.path.parent / 'categories'
-        for cat_path in cat_dir.glob('*.html'):
+        for cat_path in _validate_and_collect_page_paths(cat_dir, [], []):
             if cat_path not in all_cat_paths:
-                print(f'[WARNING] {cat_path} をアンステージ＆削除してください')
+                raise ValueError(f'廃れたカテゴリページ {cat_path}')
 
         # 目次ページ自身の生成
         print('[INFO] 目次ページ生成')
@@ -176,12 +208,23 @@ class IndexPage(Page):
         }
         self.generate(template, context)
 
+        # 不要なファイルやサブディレクトリがないことの確認
+        _validate(lang_root, ['index.html'], ['articles', 'categories'])
+
+
     def get_pages(self):
         return [self] + self.articles + self.all_cats
 
 
 class Sitemap:
     def __init__(self, domain, site_root, pages):
+        # 不要なファイルやサブディレクトリがないことの確認
+        files_allowed = ['style.css', 'funcs.js', 'robots.txt', 'sitemap.xml']
+        subdirs_allowed = ['css', 'ja']
+        _validate(site_root, files_allowed, subdirs_allowed)
+        _validate(site_root / 'css', ['jupyter.css'], [])
+
+        # サイトマップ生成
         print('[INFO] サイトマップ生成')
         sitemap_path = site_root / 'sitemap.xml'
         lines = [
@@ -190,8 +233,7 @@ class Sitemap:
             '\n'.join([page.as_xml_url(domain, site_root) for page in pages]),
             '</urlset>',
         ]
-        sitemap_path.write_text('\n'.join(lines) + '\n', newline='\n', encoding='utf8')
-        print(f'生成済み {sitemap_path}')
+        _write_text(sitemap_path, '\n'.join(lines) + '\n')
 
 
 if __name__ == '__main__':
@@ -205,4 +247,6 @@ if __name__ == '__main__':
 
     ret = _run(['git', 'status', '-s'])
     if ret != '':
-        raise ValueError(f'[WARNING] ヘッドコミットとワークツリーに差分\n{ret}')
+        ret_diff = _run(['git', 'diff', '--name-only'])
+        msg = 'Unstaged changes detected' if ret_diff != '' else 'No unstaged changes'
+        raise ValueError(f'Differences between HEAD commit and working tree ({msg})\n{ret}')
