@@ -7,7 +7,7 @@ jobs:
       - run: |
           git init .
           git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
-          git fetch --no-tags --depth=0 origin ${{ github.sha }}
+          git fetch --no-tags origin ${{ github.sha }}
           git checkout --detach ${{ github.sha }}
       - run: pipx install uv
       - run: uv run build.py
