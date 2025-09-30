@@ -1,6 +1,6 @@
 # Cookie Box
 
-[https://cookie-box.info/](https://cookie-box.info/)
+[https://cookie-box.info/ja/index.html](https://cookie-box.info/ja/index.html)
 
 ## Article Update Procedure
 
