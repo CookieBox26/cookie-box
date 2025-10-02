@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pandas: Styler でデータフレームの見た目をカスタマイズする - Cookie Box</title>
+<title>Pandas データフレームの見た目をカスタマイズする方法 (ケース別) - Cookie Box</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -17,22 +17,33 @@
 <main class="main">
 <div id="smartphone-header"></div>
 <div class="item">
-<h1>Pandas: Styler でデータフレームの見た目をカスタマイズする</h1>
+<h1>Pandas データフレームの見た目をカスタマイズする方法 (ケース別)</h1>
 
 <div class="categories">
-<a href="../categories/category_pandas.html">Pandas</a>
+<a href="../categories/pandas.html">Pandas</a>,&nbsp;
+<a href="../categories/jupyter-notebook.html">Jupyter Notebook</a>
 </div>
 <div class="summary">
 &#x1f36a;この記事の内容:
 <ul>
-<li>pandas.DataFrame で表全体 / 列にスタイルを適用する方法。</li>
-<li>pandas.DataFrame で行ごとの 1 位と 2 位を目立たせる方法。</li>
+<li>pandas.DataFrame を Jupyter Notebook 上で表示する (その他 HTML 化する) とき、セルの背景色や文字色や数値フォーマットなどをカスタマイズする。具体的に、</li>
+<ul>
+<li>表全体 / 指定の列全体 / 指定の行全体にスタイルを適用する (Styler.set_table_styles, set_properties, format)。</li>
+<li>そのセルの値のみに応じたスタイルを適用する (Styler.map)。</li>
+<li>その行 (列) の値の配列に応じてその行 (列) にスタイルを適用する (Styler.apply)。</li>
+<ul>
+<li>例. 行ごとの 1 位と 2 位を目立たせる。</li>
+</ul>
+</ul>
 </ul>
 </div>
+
+pandas.DataFrame を Jupyter Notebook 上で表示する (その他 HTML 化する) とき、値が 1 位のセルを目立たせるなど見た目をカスタマイズしたいことがある。このようなときは、<code class="language-python">.style</code> でスタイルシートを操作できるオブジェクト (pandas.io.formats.style.Styler) を取得し、これをカスタマイズして表示すると便利である。以下、ケース別の使用例を示す。
 
 <h2>参考文献</h2>
 <ol class="ref small">
 <li>pandas.io.formats.style.Styler &#8212; pandas 2.3.2 documentation, <a class="asis" href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.html"></a>, 2025年9月26日参照.</li>
+<li>詳細度 - CSS: カスケーディングスタイルシート | MDN, <a class="asis" href="https://developer.mozilla.org/ja/docs/Web/CSS/CSS_cascade/Specificity"></a>, 2025年10月2日参照.</li>
 </ol>
 
 <h2>[参考] そのまま表示する</h2>
@@ -94,7 +105,14 @@ display(HTML(df.to_html()))
 </table>
 </div>
 
-<h2>表全体 / 列にスタイルを適用する (セルの値によらず)</h2>
+<h2>表全体 / 指定の列全体 / 指定の行全体にスタイルを適用する (Styler.set_table_styles, set_properties, format)</h2>
+
+セルの値によらないスタイルの適用は <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.set_table_styles.html">set_table_styles</a> を利用すると可読性がよいと思われる。列に関しては <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.set_properties.html">set_properties</a> を利用すると列名で指定できる。数値列のフォーマットは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.format.html">format</a> で可能である。
+<ul>
+<li>set_table_styles は表全体や i 行目や j 列目のスタイルを指定できる。列名やインデックス名でも指定できるが (その場合は引数を dict 型にする)、表全体に適用したいスタイルがあるときは併用できない (set_table_styles を重ねて適用すると最後のスタイルしか適用されない)。</li>
+<li>set_table_styles の selector には th, td, tr といった HTML 要素を指定できる他、.row0 (0行目のすべてのセル), .col0 (ヘッダ含む0列目のすべてのセル), .data (ヘッダでないすべてのセル) などの定義済みクラスも指定できる (実際に生成された HTML 文字列をみるとよい)。</li>
+<li>set_properties による列へのスタイル適用はヘッダ行には適用されないので注意。</li>
+</ul>
 
 <pre class="language-python"><code>
 from IPython.display import HTML, display
@@ -107,71 +125,174 @@ df = pd.DataFrame({
     'Model C Loss': [0.3, 0.2, 0.1, 0.1],
 })
 
-styled = df.style.set_table_styles([  # 表全体のスタイル変更
+# Task 3 の行を黄色くしたいとき何行目かをとっておく (0始まりで2行目)
+i_row_yellow = df.index.get_loc((df[df['Task Name'] == 'Task 3']).index[0])
+
+styled = df.style.set_table_styles([
+    # 表全体のスタイル変更 (枠線, ヘッダ行を灰色, その他の行を白色)
     {'selector': 'th,td', 'props': [('border', '1px solid darkgray')]},
-    {'selector': 'th', 'props': [('background', 'lightgray')]},
+    {'selector': 'th', 'props': [('background', 'lightgray'), ('text-align', 'left')]},
     {'selector': 'td', 'props': [('background', 'white')]},
-    # 0列目の左揃えは以下でも可
-    # {'selector': 'td.col0', 'props': [('text-align', 'left')]},
+    # Task 3 の行を黄色に
+    {'selector': f'.row{i_row_yellow}', 'props': [('background', 'yellow')]},
+    # 0 列目を左揃えに (列名からでも可)
+    # {'selector': '.col0', 'props': [('text-align', 'left')]},
 ]).set_properties(  # 指定の列を左揃え
     subset=['Task Name'], **{'text-align': 'left'},
-).format(  # 指定の列の数値をフォーマット
-    {f'Model {c} Loss': '{:.3f}' for c in 'ABC'},
-).hide(axis=0)  # インデクス列を隠す
+).format({  # 指定の列の数値をフォーマット
+    'Model A Loss': '{:.3f}',
+    'Model B Loss': '{:.3f}',
+    'Model C Loss': '{:.3f}',
+}).hide(axis=0)  # インデクス列を隠す
 
 display(HTML(styled.to_html()))
 </code></pre>
 <div class="jupyter">
-<table id="T_667c6">
+<table id="T_e5240">
 <thead>
 <tr>
-<th class="col_heading level0 col0" id="T_667c6_level0_col0">Task Name</th>
-<th class="col_heading level0 col1" id="T_667c6_level0_col1">Model A Loss</th>
-<th class="col_heading level0 col2" id="T_667c6_level0_col2">Model B Loss</th>
-<th class="col_heading level0 col3" id="T_667c6_level0_col3">Model C Loss</th>
+<th class="col_heading level0 col0" id="T_e5240_level0_col0">Task Name</th>
+<th class="col_heading level0 col1" id="T_e5240_level0_col1">Model A Loss</th>
+<th class="col_heading level0 col2" id="T_e5240_level0_col2">Model B Loss</th>
+<th class="col_heading level0 col3" id="T_e5240_level0_col3">Model C Loss</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="data row0 col0" id="T_667c6_row0_col0">Task 1</td>
-<td class="data row0 col1" id="T_667c6_row0_col1">0.100</td>
-<td class="data row0 col2" id="T_667c6_row0_col2">0.200</td>
-<td class="data row0 col3" id="T_667c6_row0_col3">0.300</td>
+<td class="data row0 col0" id="T_e5240_row0_col0">Task 1</td>
+<td class="data row0 col1" id="T_e5240_row0_col1">0.100</td>
+<td class="data row0 col2" id="T_e5240_row0_col2">0.200</td>
+<td class="data row0 col3" id="T_e5240_row0_col3">0.300</td>
 </tr>
 <tr>
-<td class="data row1 col0" id="T_667c6_row1_col0">Task 2</td>
-<td class="data row1 col1" id="T_667c6_row1_col1">0.300</td>
-<td class="data row1 col2" id="T_667c6_row1_col2">0.100</td>
-<td class="data row1 col3" id="T_667c6_row1_col3">0.200</td>
+<td class="data row1 col0" id="T_e5240_row1_col0">Task 2</td>
+<td class="data row1 col1" id="T_e5240_row1_col1">0.300</td>
+<td class="data row1 col2" id="T_e5240_row1_col2">0.100</td>
+<td class="data row1 col3" id="T_e5240_row1_col3">0.200</td>
 </tr>
 <tr>
-<td class="data row2 col0" id="T_667c6_row2_col0">Task 3</td>
-<td class="data row2 col1" id="T_667c6_row2_col1">0.100</td>
-<td class="data row2 col2" id="T_667c6_row2_col2">0.300</td>
-<td class="data row2 col3" id="T_667c6_row2_col3">0.100</td>
+<td class="data row2 col0" id="T_e5240_row2_col0">Task 3</td>
+<td class="data row2 col1" id="T_e5240_row2_col1">0.100</td>
+<td class="data row2 col2" id="T_e5240_row2_col2">0.300</td>
+<td class="data row2 col3" id="T_e5240_row2_col3">0.100</td>
 </tr>
 <tr>
-<td class="data row3 col0" id="T_667c6_row3_col0">Task 4</td>
-<td class="data row3 col1" id="T_667c6_row3_col1">0.100</td>
-<td class="data row3 col2" id="T_667c6_row3_col2">0.100</td>
-<td class="data row3 col3" id="T_667c6_row3_col3">0.100</td>
+<td class="data row3 col0" id="T_e5240_row3_col0">Task 4</td>
+<td class="data row3 col1" id="T_e5240_row3_col1">0.100</td>
+<td class="data row3 col2" id="T_e5240_row3_col2">0.100</td>
+<td class="data row3 col3" id="T_e5240_row3_col3">0.100</td>
 </tr>
 </tbody>
 </table>
 </div>
 
-<h2>行ごとの 1 位と 2 位を目立たせる</h2>
+<h2>そのセルの値のみに応じたスタイルを適用する (Styler.map)</h2>
+
+セルの値に応じてスタイルを適用したいこともある。そのセルの値のみに応じたスタイルを適用するときは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.map.html">map</a> を使う。「セルの値を受け取ってスタイルを返す関数」を用意し、適用する列範囲・行範囲と共に渡せばよい。
+<ul>
+<li>この典型ケースは「負の数値の文字色を赤にする」である (ドキュメントにある)。</li>
+<li>subset には適用する列範囲・行範囲を渡すが、全体に適用するなら渡さなくてよい。下記の例では列範囲を渡しているが、例えば列範囲も行範囲も絞るときは以下のようにすればよい。</li>
+<ul>
+<li><code class="language-python">.map(subset=([1, 2], ['Model A Loss', 'Model B Loss']), func=_func)</code></li>
+</ul>
+</ul>
+
+<ul class="doughnut">
+<li>なお、set_table_styles でスタイル適用済みのセルに map で同じ CSS プロパティを適用すると set_table_styles が優先されてしまう (詳細度の関係であり、詳しくは参考文献を参照)。この場合は map で適用するスタイルに !important を付ける必要がある。</li>
+<ul>
+<li>例えば下記の例では map で文字色を指定しているが、これは set_table_styles と競合していない。もし競合していたら <code class="language-python">'color: blue !important;'</code> とする必要がある。</li>
+</ul>
+</ul>
 
 <pre class="language-python"><code>
 from IPython.display import HTML, display
 import pandas as pd
 
-conf_color = {  # 何位の背景色を何色にするかの設定
-    1: 'background: #8dce6f !important;',  # 1 位は緑
-    2: 'background: #ccf188 !important;',  # 2 位は黄緑
+def _func(v):  # セルの値を受け取ってスタイルを返す関数
+    if v < 0.15:
+        return 'color: blue;'
+    if v > 0.25:
+        return 'color: red;'
+    return ''
+
+df = pd.DataFrame({
+    'Task Name': ['Task 1', 'Task 2', 'Task 3', 'Task 4'],
+    'Model A Loss': [0.1, 0.3, 0.1, 0.1],
+    'Model B Loss': [0.2, 0.1, 0.3, 0.1],
+    'Model C Loss': [0.3, 0.2, 0.1, 0.1],
+})
+
+styled = df.style \
+    .set_table_styles([
+        {'selector': 'th,td', 'props': [('border', '1px solid darkgray')]},
+        {'selector': 'th', 'props': [('background', 'lightgray'), ('text-align', 'left')]},
+        {'selector': 'td', 'props': [('background', 'white')]}]) \
+    .format({f'Model {c} Loss': '{:.3f}' for c in 'ABC'}) \
+    .set_properties(subset=['Task Name'], **{'text-align': 'left'}) \
+    .map(subset=[f'Model {c} Loss' for c in 'ABC'], func=_func)
+display(HTML(styled.hide(axis=0).to_html()))
+</code></pre>
+<div class="jupyter">
+<table id="T_52d5b">
+<thead>
+<tr>
+<th class="col_heading level0 col0" id="T_52d5b_level0_col0">Task Name</th>
+<th class="col_heading level0 col1" id="T_52d5b_level0_col1">Model A Loss</th>
+<th class="col_heading level0 col2" id="T_52d5b_level0_col2">Model B Loss</th>
+<th class="col_heading level0 col3" id="T_52d5b_level0_col3">Model C Loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="data row0 col0" id="T_52d5b_row0_col0">Task 1</td>
+<td class="data row0 col1" id="T_52d5b_row0_col1">0.100</td>
+<td class="data row0 col2" id="T_52d5b_row0_col2">0.200</td>
+<td class="data row0 col3" id="T_52d5b_row0_col3">0.300</td>
+</tr>
+<tr>
+<td class="data row1 col0" id="T_52d5b_row1_col0">Task 2</td>
+<td class="data row1 col1" id="T_52d5b_row1_col1">0.300</td>
+<td class="data row1 col2" id="T_52d5b_row1_col2">0.100</td>
+<td class="data row1 col3" id="T_52d5b_row1_col3">0.200</td>
+</tr>
+<tr>
+<td class="data row2 col0" id="T_52d5b_row2_col0">Task 3</td>
+<td class="data row2 col1" id="T_52d5b_row2_col1">0.100</td>
+<td class="data row2 col2" id="T_52d5b_row2_col2">0.300</td>
+<td class="data row2 col3" id="T_52d5b_row2_col3">0.100</td>
+</tr>
+<tr>
+<td class="data row3 col0" id="T_52d5b_row3_col0">Task 4</td>
+<td class="data row3 col1" id="T_52d5b_row3_col1">0.100</td>
+<td class="data row3 col2" id="T_52d5b_row3_col2">0.100</td>
+<td class="data row3 col3" id="T_52d5b_row3_col3">0.100</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+<h2>その行 (列) の値の配列に応じてその行 (列) にスタイルを適用する (Styler.apply)</h2>
+
+そのセルの値のみでなく、同じ行 (列) の値にも応じてスタイルを適用したいこともある。このときは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.apply.html">apply</a> を使う。例えば行ごとに適用するなら、「行を受け取ってその要素数のスタイルの配列を返す関数」を用意し、適用する列範囲と共に渡せばよい (引数 axis=1 も必要)。列ごとでも同様 (こちらは axis=0)。
+<ul>
+<li>apply 自体はテーブルを受け取ることもできる (axis=None)。</li>
+</ul>
+
+<h3>例. 行ごとの 1 位と 2 位を目立たせる</h3>
+
+以下の関数 _highlight(row) はデータフレームの行を受け取り、値の降順の順位の列とし、さらに順位に応じた背景色の列として返す。なお、set_table_styles でもセル背景色を適用しているため !important が必要である (前述)。
+
+<pre class="language-python"><code>
+from IPython.display import HTML, display
+import pandas as pd
+
+conf_color = {  # 何位の背景色を何色にするかの設定 (!important が必要)
+    1: 'background: #8dce6f !important;',  # 1位は緑
+    2: 'background: #ccf188 !important;',  # 2位は黄緑
 }
 
-def _highlight(row):
+def _highlight(row):  # 行を受け取ってその要素数のスタイルの配列を返す関数
     rank = row.rank(ascending=True, method='min')
     return rank.map(lambda x: conf_color.get(x, ''))
 
@@ -185,47 +306,47 @@ df = pd.DataFrame({
 styled = df.style \
     .set_table_styles([
         {'selector': 'th,td', 'props': [('border', '1px solid darkgray')]},
-        {'selector': 'th', 'props': [('background', 'lightgray')]},
+        {'selector': 'th', 'props': [('background', 'lightgray'), ('text-align', 'left')]},
         {'selector': 'td', 'props': [('background', 'white')]}]) \
+    .format({f'Model {c} Loss': '{:.3f}' for c in 'ABC'}) \
     .set_properties(subset=['Task Name'], **{'text-align': 'left'}) \
-    .apply(_highlight, axis=1, subset=[f'Model {c} Loss' for c in 'ABC']) \
-    .format({f'Model {c} Loss': '{:.3f}' for c in 'ABC'})
+    .apply(_highlight, axis=1, subset=[f'Model {c} Loss' for c in 'ABC'])
 display(HTML(styled.hide(axis=0).to_html()))
 </code></pre>
 <div class="jupyter">
-<table id="T_a5ee7">
+<table id="T_466d9">
 <thead>
 <tr>
-<th class="col_heading level0 col0" id="T_a5ee7_level0_col0">Task Name</th>
-<th class="col_heading level0 col1" id="T_a5ee7_level0_col1">Model A Loss</th>
-<th class="col_heading level0 col2" id="T_a5ee7_level0_col2">Model B Loss</th>
-<th class="col_heading level0 col3" id="T_a5ee7_level0_col3">Model C Loss</th>
+<th class="col_heading level0 col0" id="T_466d9_level0_col0">Task Name</th>
+<th class="col_heading level0 col1" id="T_466d9_level0_col1">Model A Loss</th>
+<th class="col_heading level0 col2" id="T_466d9_level0_col2">Model B Loss</th>
+<th class="col_heading level0 col3" id="T_466d9_level0_col3">Model C Loss</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="data row0 col0" id="T_a5ee7_row0_col0">Task 1</td>
-<td class="data row0 col1" id="T_a5ee7_row0_col1">0.100</td>
-<td class="data row0 col2" id="T_a5ee7_row0_col2">0.200</td>
-<td class="data row0 col3" id="T_a5ee7_row0_col3">0.300</td>
+<td class="data row0 col0" id="T_466d9_row0_col0">Task 1</td>
+<td class="data row0 col1" id="T_466d9_row0_col1">0.100</td>
+<td class="data row0 col2" id="T_466d9_row0_col2">0.200</td>
+<td class="data row0 col3" id="T_466d9_row0_col3">0.300</td>
 </tr>
 <tr>
-<td class="data row1 col0" id="T_a5ee7_row1_col0">Task 2</td>
-<td class="data row1 col1" id="T_a5ee7_row1_col1">0.300</td>
-<td class="data row1 col2" id="T_a5ee7_row1_col2">0.100</td>
-<td class="data row1 col3" id="T_a5ee7_row1_col3">0.200</td>
+<td class="data row1 col0" id="T_466d9_row1_col0">Task 2</td>
+<td class="data row1 col1" id="T_466d9_row1_col1">0.300</td>
+<td class="data row1 col2" id="T_466d9_row1_col2">0.100</td>
+<td class="data row1 col3" id="T_466d9_row1_col3">0.200</td>
 </tr>
 <tr>
-<td class="data row2 col0" id="T_a5ee7_row2_col0">Task 3</td>
-<td class="data row2 col1" id="T_a5ee7_row2_col1">0.100</td>
-<td class="data row2 col2" id="T_a5ee7_row2_col2">0.300</td>
-<td class="data row2 col3" id="T_a5ee7_row2_col3">0.100</td>
+<td class="data row2 col0" id="T_466d9_row2_col0">Task 3</td>
+<td class="data row2 col1" id="T_466d9_row2_col1">0.100</td>
+<td class="data row2 col2" id="T_466d9_row2_col2">0.300</td>
+<td class="data row2 col3" id="T_466d9_row2_col3">0.100</td>
 </tr>
 <tr>
-<td class="data row3 col0" id="T_a5ee7_row3_col0">Task 4</td>
-<td class="data row3 col1" id="T_a5ee7_row3_col1">0.100</td>
-<td class="data row3 col2" id="T_a5ee7_row3_col2">0.100</td>
-<td class="data row3 col3" id="T_a5ee7_row3_col3">0.100</td>
+<td class="data row3 col0" id="T_466d9_row3_col0">Task 4</td>
+<td class="data row3 col1" id="T_466d9_row3_col1">0.100</td>
+<td class="data row3 col2" id="T_466d9_row3_col2">0.100</td>
+<td class="data row3 col3" id="T_466d9_row3_col3">0.100</td>
 </tr>
 </tbody>
 </table>

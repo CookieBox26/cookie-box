@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Redshift: タイムスタンプを月曜日に丸める - Cookie Box</title>
+<title>Redshift でタイムスタンプを月曜日に丸める方法など - Cookie Box</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js" integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -16,18 +16,19 @@
 <main class="main">
 <div id="smartphone-header"></div>
 <div class="item">
-<h1>Redshift: タイムスタンプを月曜日に丸める</h1>
+<h1>Redshift でタイムスタンプを月曜日に丸める方法など</h1>
 
 <div class="categories">
-<a href="../categories/category_redshift.html">Redshift</a>
+<a href="../categories/redshift.html">Redshift</a>
 </div>
 <div class="summary">
 &#x1f36a;この記事の内容:
 <ul>
-<li>RedShift でタイムスタンプを直前の月曜日に丸める方法。</li>
-<li>RedShift でタイムスタンプを基準日から N 日ごとの日に丸める方法。</li>
+<li>RedShift でタイムスタンプを直前の月曜日に丸める。</li>
+<li>RedShift でタイムスタンプを基準日から N 日ごとの日に丸める。</li>
 </ul>
 </div>
+ログを週ごとや4週ごとに集約したいときなど、タイムスタンプを丸めたいことがある。Presto には日付を丸める関数 <a href="https://prestodb.io/docs/current/functions/datetime.html#truncation-function">date_trunc</a> があるが、Redshift にはないので、Redshift でタイムスタンプを丸める方法の例を記す。
 
 <h2>参考文献</h2>
 <ol class="ref small">

@@ -1,2 +1,3 @@
 /site/.htaccess
-upload.bat
+deploy.ps1
+log.txt
