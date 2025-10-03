@@ -57,6 +57,7 @@ def _validate(path, files_allowed, subdirs_allowed):
 
 class Page:
     site_name = 'Cookie Box'
+    css_timestamp = '2025-10-02'
 
     def eval(self):
         soup = BeautifulSoup(self.path.read_text(encoding='utf8'), 'html.parser')
@@ -78,9 +79,9 @@ class Page:
         status = _run(['git', 'status', '-s', self.path])
         if status == '':  # 最新コミットとワークツリーが一致していれば最新コミット日
             self.timestamp = _run(['git', 'log', '-1', '--format="%ad"', '--date=short', self.path])
-        else:  # 最新コミットとステージ済またはワークツリーが不一致ならこのスクリプトの実行日
-            now = datetime.utcnow() + timedelta(hours=9)
-            self.timestamp = now.strftime('%Y-%m-%d')
+        else:  # そうでなければファイルの最終変更日
+            # self.timestamp = (datetime.utcnow() + timedelta(hours=9)).strftime('%Y-%m-%d')
+            self.timestamp = datetime.fromtimestamp(self.path.stat().st_mtime).strftime('%Y-%m-%d')
         print(self.timestamp, self.title)
 
         return soup
@@ -137,6 +138,7 @@ class Category(Page):
             'category_name': self.cat_name,
             'n_articles': len(self.articles),
             'list_article': Page.as_ul_of_links(self.articles, self.path, with_ts=True),
+            'css_timestamp': Page.css_timestamp,
         }
         super().generate(template, context)
 
@@ -205,6 +207,7 @@ class IndexPage(Page):
             'list_article_recent': list_article_recent,
             'n_category': len(self.all_cats),
             'list_category': list_category,
+            'css_timestamp': Page.css_timestamp,
         }
         self.generate(template, context)
 
@@ -237,12 +240,19 @@ class Sitemap:
 
 
 if __name__ == '__main__':
+    domain = 'https://cookie-box.info/'
+    site_root = Path(__file__).resolve().parent / 'site'
+
+    css_path = site_root / 'style.css'
+    actual_css_timestamp = _run(['git', 'log', '-1', '--format="%ad"', '--date=short', css_path])
+    print('参照用CSSタイムスタンプ', Page.css_timestamp)
+    print('実際のCSSタイムスタンプ', actual_css_timestamp)
+
     lang_root = Path(__file__).resolve().parent / 'site/ja'
     lang_template_root = Path(__file__).resolve().parent / 'templates/ja'
     index_ja = IndexPage(lang_root, lang_template_root)
 
-    domain = 'https://cookie-box.info/'
-    site_root = Path(__file__).resolve().parent / 'site'
+
     Sitemap(domain, site_root, index_ja.get_pages())
 
     ret = _run(['git', 'status', '-s'])
