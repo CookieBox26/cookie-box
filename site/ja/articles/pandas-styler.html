@@ -197,8 +197,8 @@ display(HTML(styled.to_html()))
 </ul>
 </ul>
 
-<ul class="doughnut">
-<li>なお、set_table_styles でスタイル適用済みのセルに map で同じ CSS プロパティを適用すると set_table_styles が優先されてしまう (詳細度の関係であり、詳しくは参考文献を参照)。この場合は map で適用するスタイルに !important を付ける必要がある。</li>
+<ul>
+<li class="doughnut">なお、set_table_styles でスタイル適用済みのセルに map で同じ CSS プロパティを適用すると set_table_styles が優先されてしまう (詳細度の関係であり、詳しくは参考文献を参照)。この場合は map で適用するスタイルに !important を付ける必要がある。</li>
 <ul>
 <li>例えば下記の例では map で文字色を指定しているが、これは set_table_styles と競合していない。もし競合していたら <code class="language-python">'color: blue !important;'</code> とする必要がある。</li>
 </ul>

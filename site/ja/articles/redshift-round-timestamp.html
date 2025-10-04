@@ -42,8 +42,8 @@
 <h2>タイムスタンプを直前の月曜日に丸める</h2>
 
 Redshift の DOW (曜日番号) は日曜日が 0, ..., 土曜日が 6 なので、日曜日以外は DOW - 1 日前の日付をとれば月曜日になる。日曜日は 6 日前の日付をとれば月曜日になる。よって、すべての日について (DOW + 6) % 7 日前をとれば月曜日になる。
-<ul class="chocolate">
-<li>なお、ISODOW (ISO 8601 規格の曜日) なら月曜日が 1, ..., 日曜日が 7 なので常に ISODOW - 1 日前をとれば月曜日になるが、Redshift は ISODOW に対応していない。</li>
+<ul>
+<li class="chocolate">なお、ISODOW (ISO 8601 規格の曜日) なら月曜日が 1, ..., 日曜日が 7 なので常に ISODOW - 1 日前をとれば月曜日になるが、Redshift は ISODOW に対応していない。</li>
 </ul>
 
 <pre class="language-sql"><code>

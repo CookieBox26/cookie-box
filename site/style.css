@@ -180,29 +180,31 @@ ol.note > li:before {
   counter-increment: li;
   content: '[注釈'counter(li)']';
 }
-ul.doughnut {
-  color: chocolate;
-}
-ul.doughnut > li {
+li.doughnut {
   position: relative;
   list-style: none;
+  color: chocolate;
 }
-ul.doughnut > li::before {
+li.doughnut::before {
   position: absolute;
   content: '\01f369 ';
   left: -1.5em;
 }
-ul.chocolate {
-  color: gray;
+li.doughnut + ul {
+  color: chocolate;
 }
-ul.chocolate > li {
+li.chocolate {
   position: relative;
   list-style: none;
+  color: gray;
 }
-ul.chocolate > li::before {
+li.chocolate::before {
   position: absolute;
   content: '\01f36b ';
   left: -1.5em;
+}
+li.chocolate + ul {
+  color: gray;
 }
 ol.small {
   font-size: 88%;
