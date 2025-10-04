@@ -57,10 +57,11 @@ def _validate(path, files_allowed, subdirs_allowed):
 
 class Page:
     site_name = 'Cookie Box'
-    css_timestamp = '2025-10-02'
+    css_timestamp = '2025-10-05'
 
     def eval(self):
         soup = BeautifulSoup(self.path.read_text(encoding='utf8'), 'html.parser')
+
         self.title = soup.find('h1').get_text()
         page_title = soup.title.get_text()
         if self.is_index:
@@ -69,12 +70,21 @@ class Page:
         else:
             if page_title != f'{self.title} - {Page.site_name}':
                 raise ValueError(f'title タグが h1 タグ + サイト名になっていない {self.path}')
+
         for tag in soup.find_all(True):
             if tag.has_attr('style'):
                 raise ValueError(f'インラインスタイルがある {self.path}')
+
         for a in soup.find_all('a'):
             if a.has_attr('target'):
                 raise ValueError(f'a タグに target 属性がある {self.path}')
+
+        links = soup.find_all('link', {'rel': 'stylesheet'})
+        for link in links:
+            css = link['href']
+            if css.startswith('http'):
+                continue
+            print(css)
 
         status = _run(['git', 'status', '-s', self.path])
         if status == '':  # 最新コミットとワークツリーが一致していれば最新コミット日
