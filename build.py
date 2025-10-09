@@ -57,7 +57,7 @@ def _validate(path, files_allowed, subdirs_allowed):
 
 class Page:
     site_name = 'Cookie Box'
-    css_timestamp = '2025-10-05'
+    css_timestamp = '2025-10-09'
 
     def eval(self):
         soup = BeautifulSoup(self.path.read_text(encoding='utf8'), 'html.parser')

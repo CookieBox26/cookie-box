@@ -29,3 +29,30 @@ If you ever need to remove the virtual environment created by uv, run:
 uv sync --script build.py
 ```
 It will print the environment path. Delete that path manually.
+
+### Note
+
+```toml
+path = "site/ja/articles/jupyter-notebook-convert-to-pdf.html"
+text_editor = "C:\\Program Files (x86)\\sakura\\sakura.exe"
+web_browser = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+
+[[jobs]]
+job_type = "DUPLICATE"
+base_path = "site/ja/articles/pandas-styler.html"
+new_title = "Jupyter Notebook を PDF に変換する方法"
+categories = ["Jupyter Notebook"]
+
+[[jobs]]
+job_type = 'UPDATE_CSS_TIMESTAMP'
+css_timestamp = "2025-10-09"
+
+[[jobs]]
+job_type = "ADD_REFERENCE"
+references = [
+    [
+        "Using as a command line tool &#8212; nbconvert 7.16.6 documentation",
+        "https://nbconvert.readthedocs.io/en/latest/usage.html",
+    ],
+]
+```

@@ -1,3 +1,4 @@
 /site/.htaccess
 deploy.ps1
-log.txt
+deploy.log
+helper.conf
