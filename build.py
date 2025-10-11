@@ -4,6 +4,7 @@
 #     "beautifulsoup4",
 #     "jinja2",
 #     "shirotsubaki",
+#     "toml",
 # ]
 # ///
 
@@ -13,6 +14,7 @@ from bs4 import BeautifulSoup
 from pathlib import Path
 from datetime import datetime, timedelta
 import subprocess
+import toml
 import os
 
 
@@ -56,11 +58,15 @@ def _validate(path, files_allowed, subdirs_allowed):
 
 
 class Page:
+    site_root = None
     site_name = 'Cookie Box'
     css_timestamp = '2025-10-09'
+    last_counts = None
 
     def eval(self):
-        soup = BeautifulSoup(self.path.read_text(encoding='utf8'), 'html.parser')
+        text = self.path.read_text(encoding='utf8')
+        rel_path = Path(os.path.relpath(self.path, Page.site_root)).as_posix()
+        soup = BeautifulSoup(text, 'html.parser')
 
         self.title = soup.find('h1').get_text()
         page_title = soup.title.get_text()
@@ -84,16 +90,22 @@ class Page:
             css = link['href']
             if css.startswith('http'):
                 continue
-            print(css)
+            # print(css)
 
-        status = _run(['git', 'status', '-s', self.path])
-        if status == '':  # 最新コミットとワークツリーが一致していれば最新コミット日
-            self.timestamp = _run(['git', 'log', '-1', '--format="%ad"', '--date=short', self.path])
+        count = len(text)
+        last_count = 0
+        if rel_path in Page.last_counts:
+            last_count = Page.last_counts[rel_path]['count']
+        else:
+            Page.last_counts[rel_path] = {'rel_path': rel_path}
+        if count == last_count:  # 文字数が一致していれば文字数更新日
+            self.timestamp = Page.last_counts[rel_path]['timestamp']
         else:  # そうでなければファイルの最終変更日
             # self.timestamp = (datetime.utcnow() + timedelta(hours=9)).strftime('%Y-%m-%d')
             self.timestamp = datetime.fromtimestamp(self.path.stat().st_mtime).strftime('%Y-%m-%d')
-        print(self.timestamp, self.title)
-
+            Page.last_counts[rel_path]['timestamp'] = self.timestamp
+            Page.last_counts[rel_path]['count'] = count
+        print(self.timestamp, self.title, f'({last_count} --> {count})')
         return soup
 
     def __init__(self, path, is_index=False):
@@ -113,8 +125,8 @@ class Page:
         elm_ts = str(Elm('span', self.timestamp).set_attr('class', 'index-ts')).replace('\n', '')
         return f'{elm_a} {elm_ts}'
 
-    def as_xml_url(self, domain, site_root):
-        url = domain + Path(os.path.relpath(self.path, site_root)).as_posix()
+    def as_xml_url(self, domain):
+        url = domain + Path(os.path.relpath(self.path, Page.site_root)).as_posix()
         priority = 1.0 if self.is_index else 0.5
         lines = [
             '<url>',
@@ -224,7 +236,6 @@ class IndexPage(Page):
         # 不要なファイルやサブディレクトリがないことの確認
         _validate(lang_root, ['index.html'], ['articles', 'categories'])
 
-
     def get_pages(self):
         return [self] + self.articles + self.all_cats
 
@@ -243,7 +254,7 @@ class Sitemap:
         lines = [
             '<?xml version="1.0" encoding="UTF-8"?>',
             '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">',
-            '\n'.join([page.as_xml_url(domain, site_root) for page in pages]),
+            '\n'.join([page.as_xml_url(domain) for page in pages]),
             '</urlset>',
         ]
         _write_text(sitemap_path, '\n'.join(lines) + '\n')
@@ -251,19 +262,20 @@ class Sitemap:
 
 if __name__ == '__main__':
     domain = 'https://cookie-box.info/'
-    site_root = Path(__file__).resolve().parent / 'site'
-
-    css_path = site_root / 'style.css'
-    actual_css_timestamp = _run(['git', 'log', '-1', '--format="%ad"', '--date=short', css_path])
-    print('参照用CSSタイムスタンプ', Page.css_timestamp)
-    print('実際のCSSタイムスタンプ', actual_css_timestamp)
+    Page.site_root = Path(__file__).resolve().parent / 'site'
+    last_counts_path = Path(__file__).resolve().parent / '.last_counts.toml'
+    with open(last_counts_path, encoding='utf8') as f:
+        pages = toml.load(f)['pages']
+        Page.last_counts = {page['rel_path']: page for page in pages}
 
     lang_root = Path(__file__).resolve().parent / 'site/ja'
     lang_template_root = Path(__file__).resolve().parent / 'templates/ja'
     index_ja = IndexPage(lang_root, lang_template_root)
 
+    with open(last_counts_path, mode='w', encoding='utf8', newline='\n') as f:
+        toml.dump({'pages': [v[1] for v in sorted(Page.last_counts.items())]}, f)
 
-    Sitemap(domain, site_root, index_ja.get_pages())
+    Sitemap(domain, Page.site_root, index_ja.get_pages())
 
     ret = _run(['git', 'status', '-s'])
     if ret != '':

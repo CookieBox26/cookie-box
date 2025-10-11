@@ -1,0 +1,137 @@
+<!DOCTYPE HTML>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>mecab-python3 で形態素解析する方法 - Cookie Box</title>
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" referrerpolicy="no-referrer" rel="stylesheet"/>
+<script crossorigin="anonymous" defer="" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script crossorigin="anonymous" defer="" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<link href="../../style.css?v=2025-10-09" rel="stylesheet" type="text/css"/>
+<script data-lang="ja" data-mainpage="false" defer="" id="app" src="../../funcs.js"></script>
+</head>
+<body>
+<div class="container">
+<div id="sidebar"></div>
+<main class="main">
+<div id="smartphone-header"></div>
+<div class="item">
+<h1>mecab-python3 で形態素解析する方法</h1>
+<div class="categories"><a href="../categories/mecab.html">MeCab</a></div>
+<div class="summary">
+🍪この記事の内容:
+<ul>
+<li>mecab-python3 で形態素解析する。</li>
+</ul>
+</div>
+
+日本語文章を形態素解析する (意味を持つ最小単位に分割し品詞をタグ付けする) ソフトウェアの一つに MeCab [1] があるが、MeCab には Python ラッパー mecab-python3 [2] もあり Python からの利用も便利である。mecab-python3 は MeCab の厳密なラッパーなので、出力をカスタマイズしたいときなどは MeCab 本体のマニュアルを参照するとよい。
+
+<h2>参考文献</h2>
+<ol class="ref small">
+<li>MeCab: Yet Another Part-of-Speech and Morphological Analyzer, <a class="asis" href="https://taku910.github.io/mecab/"></a>, 2025年10月12日参照.</li>
+<ul>
+<li>上記や以下のマニュアルは MeCab に同梱されている。<code class="language-">C:\Program Files\MeCab\doc</code> などにある。</li>
+<ol>
+<li>出力フォーマット: <a class="asis" href="https://taku910.github.io/mecab/format.html"></a></li>
+</ol>
+</ul>
+<li>SamuraiT/mecab-python3: 🐍 mecab-python. you can find original version here:http://taku910.github.io/mecab/, <a class="asis" href="https://github.com/SamuraiT/mecab-python3"></a>, 2025年10月12日参照.</li>
+<li>辞書のフィールド | Yuta Hayashibe, <a class="asis" href="https://hayashibe.jp/tr/mecab/dictionary/unidic/field"></a>, 2025年10月12日参照.</li>
+<ul>
+<li>辞書が UniDic の場合に MeCab から取得できる形態素の特徴がある。辞書が UniDic でなく IPADIC や JUMAN の場合のフィールドも上記サイト内の別ページにある。</li>
+</ul>
+</ol>
+
+<h2>形態素解析する (形態素の表層文字列のみ取得する)</h2>
+文章を分割するだけであれば、出力フォーマットをわかち書き [1] (の 1.) として形態素間に空白を挿入し、必要に応じて <code class="language-">.split()</code> すればよい。
+<pre class="language-python"><code>
+import MeCab
+
+if __name__ == '__main__':
+    dict_path = 'C:/Program Files/MeCab/dic/unidic-csj-3.1.1-full'
+    tagger = MeCab.Tagger(f'-d "{dict_path}" -O wakati')  # わかち書き
+
+    s = 'ヒンメルはもういないじゃない'
+    tokens = tagger.parse(s).split()
+    print(tokens)
+</code></pre>
+<pre class="language-text"><code>
+['ヒンメル', 'は', 'もう', 'い', 'ない', 'じゃ', 'ない']
+</code></pre>
+クラスにしておくと常に何らかの前処理や後処理をしたいときに便利である。
+<pre class="language-python"><code>
+import MeCab
+
+class MyParser:
+    def __init__(self):
+        dict_path = 'C:/Program Files/MeCab/dic/unidic-csj-3.1.1-full'
+        self.tagger = MeCab.Tagger(f'-d "{dict_path}" -O wakati')
+    def parse(self, s):
+        return self.tagger.parse(s).split()
+
+if __name__ == '__main__':
+    parser = MyParser()
+    s = 'ヒンメルはもういないじゃない'
+    print(parser.parse(s))
+</code></pre>
+
+<h2>形態素解析する (形態素の特徴も取得する)</h2>
+各形態素の表層文字列だけでなく、品詞や基本形や読みなどの形態素自体の特徴や、分割するにあたって用いられた生起コストや連接コストなどの特徴がほしいこともある。
+<ul>
+<li>前者の形態素自体の特徴については、何が取得できるかは辞書に依存する。UniDic の場合に取得できるフィールドは参考文献 [3] にある (配布元の国語研コーパスポータルを参照するべきだが、この記事を書いている2025年10月12日現在、不明な原因で手元からアクセスできない)。
+</li>
+<li>後者の分割時の特徴はマニュアル [1] (の 1.) に詳しい。</li>
+</ul>
+
+これらを踏まえて、各形態素の「表層文字列, 品詞大分類, 中分類, 小分類, 細分類, 生起コスト, 1つ前の形態素との連接コスト, 累積コスト」を取得すると以下のようになる。
+<pre class="language-python"><code>
+import MeCab
+
+class MyParser:
+    def __init__(self):
+        dict_path = 'C:/Program Files/MeCab/dic/unidic-csj-3.1.1-full'
+        self.tagger = MeCab.Tagger(
+            f'-d "{dict_path}" -O ""'
+            # 表層文字列, 品詞大分類, 中分類, 小分類, 細分類, 
+            # 生起コスト, 1つ前の形態素との連接コスト, 累積コスト
+            ' --node-format="%m, %f[0], %f[1], %f[2], %f[3], %c, %pC, %pc\n"'
+            ' --bos-format="&lt;BOS>, , , , , %c, 0, %pc\n"'
+            ' --eos-format="&lt;EOS>, , , , , %c, %pC, %pc"'
+        )
+    def parse(self, s):
+        tokens = self.tagger.parse(s).split('\n')
+        return [token.split(', ') for token in tokens]
+
+if __name__ == '__main__':
+    parser = MyParser()
+    s = 'ヒンメルはもういないじゃない'
+    tokens = parser.parse(s)
+    for token in tokens:
+        print(token)
+</code></pre>
+<pre class="language-text"><code>
+['&lt;BOS>', '', '', '', '', '0', '0', '0']
+['ヒンメル', '名詞', '普通名詞', '一般', '', '5147', '5250', '10397']
+['は', '助詞', '係助詞', '', '', '-994', '3123', '12526']
+['もう', '副詞', '', '', '', '-1851', '4259', '14934']
+['い', '動詞', '非自立可能', '', '', '5709', '2805', '23448']
+['ない', '助動詞', '', '', '', '4517', '-8053', '19912']
+['じゃ', '助動詞', '', '', '', '1848', '744', '22504']
+['ない', '形容詞', '非自立可能', '', '', '2107', '-5702', '18909']
+['&lt;EOS>', '', '', '', '', '0', '2568', '21477']
+</code></pre>
+
+なお、マニュアル [1] (の 1.) にある通り、出力フォーマットは使用している辞書の設定ファイル (例えば <code class="language-">C:/Program Files/MeCab/dic/unidic-csj-3.1.1-full/dicrc</code>) に定義することもできる。以下 3 行を追記した上で <code class="language-python">self.tagger = MeCab.Tagger(f'-d "{dict_path}" -O hoge')</code> とタガーを生成しても同じ結果が得られる。
+<pre class="language-text"><code>
+node-format-hoge = %m, %f[0], %f[1], %f[2], %f[3], %c, %pC, %pc\n
+bos-format-hoge = &lt;BOS>, , , , , %c, 0, %pc\n
+eos-format-hoge = &lt;EOS>, , , , , %c, %pC, %pc
+</code></pre>
+
+</div>
+</main>
+</div>
+</body>
+</html>

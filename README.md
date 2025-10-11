@@ -22,7 +22,7 @@ uv run build.py
     - Before committing, there will always be differences, so it is sufficient as long as there are no unstaged changes.
 - `build.py` also runs on push. If it fails, fix the errors.
 
-### Note
+### Note: When You Want to Remove the uv Environment
 
 If you ever need to remove the virtual environment created by uv, run:
 ```
@@ -30,7 +30,19 @@ uv sync --script build.py
 ```
 It will print the environment path. Delete that path manually.
 
-### Note
+### Note: Article Creation Helper Tool
+
+You can run the article creation helper tool with the following command:
+```
+uv run helper.py
+```
+
+Before running it, configure the job in `.helper.toml` as shown below.
+
+- `path`: Specify the path to the article you want to edit.
+- `text_editor` and `web_browser`: Optional. If set, the tool will open the specified path in your editor and browser.
+- `jobs.job_type`: Can be one of `COPY_FROM`, `UPDATE_CSS_TIMESTAMP`, or `ADD_REFERENCE`.
+  - `COPY_FROM` creates a new article based on base_path. It will fail if the specified path already exists.
 
 ```toml
 path = "site/ja/articles/jupyter-notebook-convert-to-pdf.html"
@@ -38,13 +50,13 @@ text_editor = "C:\\Program Files (x86)\\sakura\\sakura.exe"
 web_browser = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
 
 [[jobs]]
-job_type = "DUPLICATE"
+job_type = "COPY_FROM"
 base_path = "site/ja/articles/pandas-styler.html"
 new_title = "Jupyter Notebook を PDF に変換する方法"
 categories = ["Jupyter Notebook"]
 
 [[jobs]]
-job_type = 'UPDATE_CSS_TIMESTAMP'
+job_type = "UPDATE_CSS_TIMESTAMP"
 css_timestamp = "2025-10-09"
 
 [[jobs]]

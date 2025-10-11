@@ -291,8 +291,8 @@ ul.ref-list>li {
   text-indent: -2em;
 }
 :not(pre)>code[class*=language-] {
-  padding-top: 0.05em;
-  padding-bottom: 0.05em;
+  padding-top: 0;
+  padding-bottom: 0;
 }
 pre[class*="language-"] {
   border: 0 !important;
@@ -322,6 +322,9 @@ div.gist-data td {
   font-family: 'JetBrains Mono', 'M PLUS 1 Code', monospace !important;
   font-weight: 300;
 }
+.gist .blob-code {
+  line-height: 1.3 !important;
+}
 .blob-num {
   display: none;
 }
@@ -344,6 +347,11 @@ div.btn:hover {
 }
 div.btn:after {
   content: ' (クリックして表示・非表示)';
+}
+@media screen and (min-width: 540px) {
+  .gist .blob-code-inner {
+    font-size: 13.25px !important;
+  }
 }
 @media screen and (max-width: 900px) {
   div#sidebar {
@@ -368,5 +376,8 @@ div.btn:after {
   }
   .main .item {
     margin: 0 0 15px 0;
+  }
+  .gist .blob-code-inner {
+    font-size: 0.75em !important;
   }
 }

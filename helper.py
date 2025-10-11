@@ -1,3 +1,11 @@
+# /// script
+# requires-python = "==3.11.*"
+# dependencies = [
+#     "beautifulsoup4",
+#     "toml",
+# ]
+# ///
+
 from bs4 import BeautifulSoup
 from pathlib import Path
 import datetime
@@ -35,7 +43,9 @@ class ArticleHelper:
         self.path = Path(path)
         self.soup = None
 
-    def duplicate(self, base_path, new_title, categories):
+    def copy_from(self, base_path, new_title, categories):
+        if self.path.exists():
+            raise ValueError(f'{self.path} exists.')
         self.soup = BeautifulSoup(Path(base_path).read_text(encoding='utf8'), 'html.parser')
         self._clear_optional_stylesheet()
         self.soup.title.string = f'{new_title} - {ArticleHelper.site_name}'
@@ -92,14 +102,14 @@ class ArticleHelper:
 
 
 if __name__ == '__main__':
-    with open('helper.conf', encoding='utf8') as f:
+    with open('.helper.toml', encoding='utf8') as f:
         conf = toml.load(f)
     print(conf['path'])
     ah = ArticleHelper(conf['path'])
     for job in conf['jobs']:
         print(job['job_type'])
-        if job['job_type'] == 'DUPLICATE':
-            ah.duplicate(
+        if job['job_type'] == 'COPY_FROM':
+            ah.copy_from(
                 base_path=job['base_path'],
                 new_title=job['new_title'],
                 categories=job['categories'],

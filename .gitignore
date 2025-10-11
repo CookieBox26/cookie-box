@@ -1,4 +1,4 @@
 /site/.htaccess
 deploy.ps1
 deploy.log
-helper.conf
+.helper.toml
