@@ -5,11 +5,11 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "e6ebe34079abee4b92b0c6758e4d297be04f63ee"
+# rev = "49c9c77cd4ac10515c9b151813e1ad4973f9aa00"
 # ///
 from pathlib import Path
 import subprocess
-from cookies_site_utils import File, Page, IndexPage, Sitemap, validate
+from cookies_site_utils import IndexPage, Sitemap, validate, index_generation_context
 
 
 def _run(command):
@@ -18,27 +18,25 @@ def _run(command):
 
 
 if __name__ == '__main__':
+    site_name = 'Cookie Box'
+    domain = 'https://cookie-box.info/'
     work_root = Path(__file__).resolve().parent
-    File.site_root = work_root / 'site'
-    File.domain = 'https://cookie-box.info/'
-    Page.site_name = 'Cookie Box'
-    Page.css_timestamp = '2025-10-09'
-    last_counts_path = work_root / '.last_counts.toml'
-    Page.load_last_counts(last_counts_path)  # ページ文字数最終更新日をロード
-
-    # 日本語インデックスページ生成
+    site_root = work_root / 'site'
     lang_root = work_root / 'site/ja'
     lang_template_root = work_root / 'templates/ja'
-    index_ja = IndexPage(lang_root, lang_template_root)
-    validate(lang_root, ['index.html'], ['articles', 'categories'])  # 不要物チェック
-    Page.dump_last_counts(last_counts_path)  # ページ文字数最終更新日をダンプ
+    last_counts_path = work_root / '.last_counts.toml'
+    css_timestamp = '2025-10-09'
 
-    # サイトマップ生成
-    Sitemap(index_ja.get_pages())
-    files_allowed = ['style.css', 'funcs.js', 'robots.txt', 'sitemap.xml']
-    subdirs_allowed = ['css', 'ja']
-    validate(File.site_root, files_allowed, subdirs_allowed)  # 不要物チェック
-    validate(File.site_root / 'css', ['jupyter.css'], [])  # 不要物チェック
+    with index_generation_context(site_root, site_name, css_timestamp, last_counts_path, domain):
+        # 日本語インデックスページ生成
+        index_ja = IndexPage(lang_root, lang_template_root)
+        # サイトマップ生成
+        Sitemap(index_ja.get_pages())
+
+    # 不要物チェック
+    validate(lang_root, ['index.html'], ['articles', 'categories'])
+    validate(site_root, ['style.css', 'funcs.js', 'robots.txt', 'sitemap.xml'], ['css', 'ja'])
+    validate(site_root / 'css', ['jupyter.css'], [])
 
     # ローカルと HEAD に差分がないことの確認
     ret = _run(['git', 'status', '-s'])
