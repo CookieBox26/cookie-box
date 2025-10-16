@@ -5,11 +5,11 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "49c9c77cd4ac10515c9b151813e1ad4973f9aa00"
+# rev = "a916109b8eaf66aaa47323e94fe6dac6283feddf"
 # ///
 from pathlib import Path
 import subprocess
-from cookies_site_utils import IndexPage, Sitemap, validate, index_generation_context
+from cookies_site_utils import IndexPage, CategoryPage, Sitemap, validate, index_generation_context
 
 
 def _run(command):
@@ -25,9 +25,9 @@ if __name__ == '__main__':
     lang_root = work_root / 'site/ja'
     lang_template_root = work_root / 'templates/ja'
     last_counts_path = work_root / '.last_counts.toml'
-    css_timestamp = '2025-10-09'
+    IndexPage.additional_context = CategoryPage.additional_context = {'css_timestamp': '2025-10-09'}
 
-    with index_generation_context(site_root, site_name, css_timestamp, last_counts_path, domain):
+    with index_generation_context(site_root, site_name, last_counts_path, domain):
         # 日本語インデックスページ生成
         index_ja = IndexPage(lang_root, lang_template_root)
         # サイトマップ生成
