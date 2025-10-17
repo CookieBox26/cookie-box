@@ -53,4 +53,6 @@ if __name__ == '__main__':
     if ret != '':
         ret_diff = _run(['git', 'diff', '--name-only'])
         msg = 'Unstaged changes detected' if ret_diff != '' else 'No unstaged changes'
+        if ret_diff != '':
+            print(_run(['git', 'diff']))
         raise ValueError(f'Differences between HEAD and working tree ({msg})\n{ret}')
