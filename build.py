@@ -5,7 +5,7 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "60ce6ca8fe8dce9a0344ff089e18d984f9069153"
+# rev = "8436c7ab920e686f3960295ef793a613d8cd42b0"
 # ///
 from pathlib import Path
 import subprocess
@@ -53,6 +53,6 @@ if __name__ == '__main__':
     if ret != '':
         ret_diff = _run(['git', 'diff', '--name-only'])
         msg = 'Unstaged changes detected' if ret_diff != '' else 'No unstaged changes'
-        if ret_diff != '':
-            print(_run(['git', 'diff']))
+        # if ret_diff != '':
+        #     print(_run(['git', 'diff']))
         raise ValueError(f'Differences between HEAD and working tree ({msg})\n{ret}')
