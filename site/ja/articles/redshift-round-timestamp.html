@@ -1,15 +1,16 @@
 <!DOCTYPE HTML>
+
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Redshift でタイムスタンプを月曜日に丸める方法など - Cookie Box</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js" integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link rel="stylesheet" type="text/css" href="../../css/style.css?v=2025-10-09">
-<link rel="stylesheet" type="text/css" href="../../css/cookie-box.css?v=2025-10-09">
-<script defer id="app" src="../../funcs.js" data-mainpage="false" data-lang="ja"></script>
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" referrerpolicy="no-referrer" rel="stylesheet"/>
+<script crossorigin="anonymous" defer="" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script crossorigin="anonymous" defer="" integrity="sha512-sijCOJblSCXYYmXdwvqV0tak8QJW5iy2yLB1wAbbLc3OOIueqymizRFWUS/mwKctnzPKpNdPJV3aK1zlDMJmXQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-sql.min.js"></script>
+<link href="../../css/style.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<script data-lang="ja" data-mainpage="false" defer="" id="app" src="../../funcs.js"></script>
 </head>
 <body>
 <div class="container">
@@ -18,12 +19,11 @@
 <div id="smartphone-header"></div>
 <div class="item">
 <h1>Redshift でタイムスタンプを月曜日に丸める方法など</h1>
-
 <div class="categories">
 <a href="../categories/redshift.html">Redshift</a>
 </div>
 <div class="summary">
-&#x1f36a;この記事の内容:
+🍪この記事の内容:
 <ul>
 <li>RedShift でタイムスタンプを直前の月曜日に丸める。</li>
 <li>RedShift でタイムスタンプを基準日から N 日ごとの日に丸める。</li>
@@ -39,14 +39,12 @@
 <li>AT TIME ZONE 関数 - Amazon Redshift, <a class="asis" href="https://docs.aws.amazon.com/ja_jp/redshift/latest/dg/r_AT_TIME_ZONE.html"></a>, 2025年9月25日参照.</li>
 <li>DATEDIFF 関数 - Amazon Redshift, <a class="asis" href="https://docs.aws.amazon.com/ja_jp/redshift/latest/dg/r_DATEDIFF_function.html"></a>, 2025年9月25日参照.</li>
 </ol>
-
 <h2>タイムスタンプを直前の月曜日に丸める</h2>
 
 Redshift の DOW (曜日番号) は日曜日が 0, ..., 土曜日が 6 なので、日曜日以外は DOW - 1 日前の日付をとれば月曜日になる。日曜日は 6 日前の日付をとれば月曜日になる。よって、すべての日について (DOW + 6) % 7 日前をとれば月曜日になる。
 <ul>
 <li class="chocolate">なお、ISODOW (ISO 8601 規格の曜日) なら月曜日が 1, ..., 日曜日が 7 なので常に ISODOW - 1 日前をとれば月曜日になるが、Redshift は ISODOW に対応していない。</li>
 </ul>
-
 <pre class="language-sql"><code>
 WITH test_data AS (
   -- テストデータ: ここでは UTC タイムゾーン付きタイムスタンプ TIMESTAMPTZ 型とする
@@ -82,7 +80,6 @@ ts_utc,                 week_utc
 <ul>
 <li>AT TIME ZONE 関数はタイムゾーン付きタイムスタンプ TIMESTAMPTZ 型をタイムゾーンなしタイムスタンプ TIMESTAMP 型にするが、どちらも EXTRACT 関数で曜日番号を抽出できる。</li>
 </ul>
-
 <pre class="language-sql"><code>
 SELECT
   -- もしデータベースが UTC だが日本における直前の月曜日をとりたい場合は JST に変換する
@@ -101,15 +98,12 @@ ts_jst,              week_jst
 2025-09-08 07:00:00, 2025-09-08
 2025-09-08 11:00:00, 2025-09-08
 </code></pre>
-
-
 <h2>タイムスタンプを基準日から N 日ごとの日に丸める</h2>
 
 より一般に、基準日から N 日ごとにデータを区切るためにタイムスタンプを丸めたいときは、DATEDIFF 関数 (日付の差を返す) を利用して、DATEDIFF % N 日前の日付をとればよい。
 <ul>
 <li>以下では基準日をタイムゾーンなしタイムスタンプ TIMESTAMP 型として与え、DATEDIFF をとるときはデータ側も TIMESTAMP 型にキャストしている。</li>
 </ul>
-
 <pre class="language-sql"><code>
 WITH test_data AS (
   -- テストデータ: ここでは UTC タイムゾーン付きタイムスタンプ TIMESTAMPTZ 型とする
@@ -169,7 +163,6 @@ ts_jst,              diff, week,       week4
 2025-09-22 11:00:00, 21,   2025-09-22, 2025-09-01
 2025-09-29 11:00:00, 28,   2025-09-29, 2025-09-29
 </code></pre>
-
 </div>
 </main>
 </div>

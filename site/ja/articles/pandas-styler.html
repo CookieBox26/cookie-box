@@ -1,16 +1,17 @@
 <!DOCTYPE HTML>
+
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Pandas データフレームの見た目をカスタマイズする方法 (ケース別) - Cookie Box</title>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<link rel="stylesheet" type="text/css" href="../../css/style.css?v=2025-10-09">
-<link rel="stylesheet" type="text/css" href="../../css/cookie-box.css?v=2025-10-09">
-<link rel="stylesheet" type="text/css" href="../../css/jupyter.css?v=2025-10-02">
-<script defer id="app" src="../../funcs.js" data-mainpage="false" data-lang="ja"></script>
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" referrerpolicy="no-referrer" rel="stylesheet"/>
+<script crossorigin="anonymous" defer="" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script crossorigin="anonymous" defer="" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<link href="../../css/style.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<link href="../../css/jupyter.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<script data-lang="ja" data-mainpage="false" defer="" id="app" src="../../funcs.js"></script>
 </head>
 <body>
 <div class="container">
@@ -19,13 +20,12 @@
 <div id="smartphone-header"></div>
 <div class="item">
 <h1>Pandas データフレームの見た目をカスタマイズする方法 (ケース別)</h1>
-
 <div class="categories">
-<a href="../categories/pandas.html">Pandas</a>,&nbsp;
+<a href="../categories/pandas.html">Pandas</a>, 
 <a href="../categories/jupyter-notebook.html">Jupyter Notebook</a>
 </div>
 <div class="summary">
-&#x1f36a;この記事の内容:
+🍪この記事の内容:
 <ul>
 <li>pandas.DataFrame を Jupyter Notebook 上で表示する (その他 HTML 化する) とき、セルの背景色や文字色や数値フォーマットなどをカスタマイズする。具体的に、</li>
 <ul>
@@ -43,10 +43,9 @@ pandas.DataFrame を Jupyter Notebook 上で表示する (その他 HTML 化す�
 
 <h2>参考文献</h2>
 <ol class="ref small">
-<li>pandas.io.formats.style.Styler &#8212; pandas 2.3.2 documentation, <a class="asis" href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.html"></a>, 2025年9月26日参照.</li>
+<li>pandas.io.formats.style.Styler — pandas 2.3.2 documentation, <a class="asis" href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.html"></a>, 2025年9月26日参照.</li>
 <li>詳細度 - CSS: カスケーディングスタイルシート | MDN, <a class="asis" href="https://developer.mozilla.org/ja/docs/Web/CSS/CSS_cascade/Specificity"></a>, 2025年10月2日参照.</li>
 </ol>
-
 <h2>[参考] そのまま表示する</h2>
 Jupyter Notebook 上でデータフレームを表示すると以下のように右揃え・偶数行グレーになる (スタイルは大まかに真似たもので、Jupyter Notebook のバージョンにもよると思われる)。df.to_html() を別の HTML に埋め込む場合はそちらでの規定のテーブルスタイルによる。
 <pre class="language-python"><code>
@@ -105,7 +104,6 @@ display(HTML(df.to_html()))
 </tbody>
 </table>
 </div>
-
 <h2>表全体 / 指定の列全体 / 指定の行全体にスタイルを適用する (Styler.set_table_styles, set_properties, format)</h2>
 
 セルの値によらないスタイルの適用は <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.set_table_styles.html">set_table_styles</a> を利用すると可読性がよいと思われる。列に関しては <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.set_properties.html">set_properties</a> を利用すると列名で指定できる。数値列のフォーマットは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.format.html">format</a> で可能である。
@@ -114,7 +112,6 @@ display(HTML(df.to_html()))
 <li>set_table_styles の selector には th, td, tr といった HTML 要素を指定できる他、.row0 (0行目のすべてのセル), .col0 (ヘッダ含む0列目のすべてのセル), .data (ヘッダでないすべてのセル) などの定義済みクラスも指定できる (実際に生成された HTML 文字列をみるとよい)。</li>
 <li>set_properties による列へのスタイル適用はヘッダ行には適用されないので注意。</li>
 </ul>
-
 <pre class="language-python"><code>
 from IPython.display import HTML, display
 import pandas as pd
@@ -186,7 +183,6 @@ display(HTML(styled.to_html()))
 </tbody>
 </table>
 </div>
-
 <h2>そのセルの値のみに応じたスタイルを適用する (Styler.map)</h2>
 
 セルの値に応じてスタイルを適用したいこともある。そのセルの値のみに応じたスタイルを適用するときは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.map.html">map</a> を使う。「セルの値を受け取ってスタイルを返す関数」を用意し、適用する列範囲・行範囲と共に渡せばよい。
@@ -197,22 +193,20 @@ display(HTML(styled.to_html()))
 <li><code class="language-python">.map(subset=([1, 2], ['Model A Loss', 'Model B Loss']), func=_func)</code></li>
 </ul>
 </ul>
-
 <ul>
 <li class="doughnut">なお、set_table_styles でスタイル適用済みのセルに map で同じ CSS プロパティを適用すると set_table_styles が優先されてしまう (詳細度の関係であり、詳しくは参考文献を参照)。この場合は map で適用するスタイルに !important を付ける必要がある。</li>
 <ul>
 <li>例えば下記の例では map で文字色を指定しているが、これは set_table_styles と競合していない。もし競合していたら <code class="language-python">'color: blue !important;'</code> とする必要がある。</li>
 </ul>
 </ul>
-
 <pre class="language-python"><code>
 from IPython.display import HTML, display
 import pandas as pd
 
 def _func(v):  # セルの値を受け取ってスタイルを返す関数
-    if v < 0.15:
+    if v &lt; 0.15:
         return 'color: blue;'
-    if v > 0.25:
+    if v &gt; 0.25:
         return 'color: red;'
     return ''
 
@@ -271,15 +265,12 @@ display(HTML(styled.hide(axis=0).to_html()))
 </tbody>
 </table>
 </div>
-
-
 <h2>その行 (列) の値の配列に応じてその行 (列) にスタイルを適用する (Styler.apply)</h2>
 
 そのセルの値のみでなく、同じ行 (列) の値にも応じてスタイルを適用したいこともある。このときは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.apply.html">apply</a> を使う。例えば行ごとに適用するなら、「行を受け取ってその要素数のスタイルの配列を返す関数」を用意し、適用する列範囲と共に渡せばよい (引数 axis=1 も必要)。列ごとでも同様 (こちらは axis=0)。
 <ul>
 <li>apply 自体はテーブルを受け取ることもできる (axis=None)。</li>
 </ul>
-
 <h3>例. 行ごとの 1 位と 2 位を目立たせる</h3>
 
 以下の関数 _highlight(row) はデータフレームの行を受け取り、値の降順の順位の列とし、さらに順位に応じた背景色の列として返す。なお、set_table_styles でもセル背景色を適用しているため !important が必要である (前述)。
@@ -352,14 +343,12 @@ display(HTML(styled.hide(axis=0).to_html()))
 </tbody>
 </table>
 </div>
-
 <!--
 <pre class="language-python"><code>
 </code></pre>
 <div class="jupyter">
 </div>
 -->
-
 </div>
 </main>
 </div>

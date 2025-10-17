@@ -1,3 +1,18 @@
+"""
+サンプル1 (すべての記事の CSS タイムスタンプを更新する)
+```toml
+[[job_groups]]
+path = "site/ja/articles/pandas-styler.html"
+jobs = [{ job_type = "UPDATE_CSS_TIMESTAMP", css = "../../css/jupyter.css", timestamp = "2025-10-18" }]
+
+[[job_groups]]
+path = "site/ja/articles/*.html"
+jobs = [
+  { job_type = "UPDATE_CSS_TIMESTAMP", css = "../../css/style.css", timestamp = "2025-10-18" },
+  { job_type = "UPDATE_CSS_TIMESTAMP", css = "../../css/cookie-box.css", timestamp = "2025-10-18" },
+]
+```
+"""
 # /// script
 # requires-python = "==3.11.*"
 # dependencies = [
@@ -26,28 +41,18 @@ class ArticleHelper:
         for child in element.children:
             child.replace_with(replace_to)
 
-    def _clear_optional_stylesheet(self):
-        links = self.soup.find_all('link', {'rel': 'stylesheet'})
-        for link in links:
-            if link['href'].startswith('https') and link['href'].endswith('prism-coy.min.css'):
-                continue
-            if link['href'].startswith('../../style.css'):
-                continue
-            link.replace_with('')
-
     def generate(self):
         self.path.write_text(str(self.soup), encoding='utf8', newline='\n')
         print(self.path.as_posix())
 
     def __init__(self, path):
-        self.path = Path(path)
+        self.path = path
         self.soup = None
 
     def copy_from(self, base_path, new_title, categories):
         if self.path.exists():
             raise ValueError(f'{self.path} exists.')
         self.soup = BeautifulSoup(Path(base_path).read_text(encoding='utf8'), 'html.parser')
-        self._clear_optional_stylesheet()
         self.soup.title.string = f'{new_title} - {ArticleHelper.site_name}'
         self.soup.find('h1').string = new_title
         item = self.soup.select_one('div.item')
@@ -79,13 +84,13 @@ class ArticleHelper:
              else:
                  cleared_last = False
 
-    def update_css_timestamp(self, css_timestamp):
+    def update_css_timestamp(self, css, timestamp):
         if self.soup is None:
             self.soup = BeautifulSoup(self.path.read_text(encoding='utf8'), 'html.parser')
         links = self.soup.find_all('link', {'rel': 'stylesheet'})
         for link in links:
-            if link['href'].startswith('../../style.css'):
-                link['href'] = f'../../style.css?v={css_timestamp}'
+            if link['href'].startswith(css):
+                link['href'] = f'{css}?v={timestamp}'
 
     def add_reference(self, references):
         if self.soup is None:
@@ -100,25 +105,38 @@ class ArticleHelper:
             li_tag.extend([', ', a_tag, f', {today}参照.'])
             ol_tag.append(li_tag)
 
+    @classmethod
+    def run_jobs(cls, path, jobs):
+        ah = cls(path)
+        for job in jobs:
+            print(job['job_type'])
+            if job['job_type'] == 'COPY_FROM':
+                ah.copy_from(
+                    base_path=job['base_path'],
+                    new_title=job['new_title'],
+                    categories=job['categories'],
+                )
+            if job['job_type'] == 'UPDATE_CSS_TIMESTAMP':
+                ah.update_css_timestamp(job['css'], job['timestamp'])
+            if job['job_type'] == 'ADD_REFERENCE':
+                ah.add_reference(job['references'])
+        ah.generate()
+        return ah
+
 
 if __name__ == '__main__':
     with open('.helper.toml', encoding='utf8') as f:
         conf = toml.load(f)
-    print(conf['path'])
-    ah = ArticleHelper(conf['path'])
-    for job in conf['jobs']:
-        print(job['job_type'])
-        if job['job_type'] == 'COPY_FROM':
-            ah.copy_from(
-                base_path=job['base_path'],
-                new_title=job['new_title'],
-                categories=job['categories'],
-            )
-        if job['job_type'] == 'UPDATE_CSS_TIMESTAMP':
-            ah.update_css_timestamp(job['css_timestamp'])
-        if job['job_type'] == 'ADD_REFERENCE':
-            ah.add_reference(job['references'])
-    ah.generate()
+
+    ah = None
+    for job_group in conf['job_groups']:
+        path = Path(job_group['path'])
+        if '*' in path.name:
+            for path in path.parent.glob(path.name):
+                ah = ArticleHelper.run_jobs(path, job_group['jobs'])
+        else:
+            ah = ArticleHelper.run_jobs(path, job_group['jobs'])
+
     if 'text_editor' in conf:
         subprocess.Popen([conf['text_editor'], ah.path.resolve()])
     if 'web_browser' in conf:

@@ -8,8 +8,8 @@
 <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" referrerpolicy="no-referrer" rel="stylesheet"/>
 <script crossorigin="anonymous" defer="" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script crossorigin="anonymous" defer="" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../../css/style.css?v=2025-10-09">
-<link rel="stylesheet" type="text/css" href="../../css/cookie-box.css?v=2025-10-09">
+<link href="../../css/style.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
 <script data-lang="ja" data-mainpage="false" defer="" id="app" src="../../funcs.js"></script>
 </head>
 <body>
@@ -44,7 +44,6 @@
 <li>辞書が UniDic の場合に MeCab から取得できる形態素の特徴がある。辞書が UniDic でなく IPADIC や JUMAN の場合のフィールドも上記サイト内の別ページにある。</li>
 </ul>
 </ol>
-
 <h2>形態素解析する (形態素の表層文字列のみ取得する)</h2>
 文章を分割するだけであれば、出力フォーマットをわかち書き [1] (の 1.) として形態素間に空白を挿入し、必要に応じて <code class="language-">.split()</code> すればよい。
 <pre class="language-python"><code>
@@ -77,7 +76,6 @@ if __name__ == '__main__':
     s = 'ヒンメルはもういないじゃない'
     print(parser.parse(s))
 </code></pre>
-
 <h2>形態素解析する (形態素の特徴も取得する)</h2>
 各形態素の表層文字列だけでなく、品詞や基本形や読みなどの形態素自体の特徴や、分割するにあたって用いられた生起コストや連接コストなどの特徴がほしいこともある。
 <ul>
@@ -98,8 +96,8 @@ class MyParser:
             # 表層文字列, 品詞大分類, 中分類, 小分類, 細分類, 
             # 生起コスト, 1つ前の形態素との連接コスト, 累積コスト
             ' --node-format="%m, %f[0], %f[1], %f[2], %f[3], %c, %pC, %pc\n"'
-            ' --bos-format="&lt;BOS>, , , , , %c, 0, %pc\n"'
-            ' --eos-format="&lt;EOS>, , , , , %c, %pC, %pc"'
+            ' --bos-format="&lt;BOS&gt;, , , , , %c, 0, %pc\n"'
+            ' --eos-format="&lt;EOS&gt;, , , , , %c, %pC, %pc"'
         )
     def parse(self, s):
         tokens = self.tagger.parse(s).split('\n')
@@ -113,7 +111,7 @@ if __name__ == '__main__':
         print(token)
 </code></pre>
 <pre class="language-text"><code>
-['&lt;BOS>', '', '', '', '', '0', '0', '0']
+['&lt;BOS&gt;', '', '', '', '', '0', '0', '0']
 ['ヒンメル', '名詞', '普通名詞', '一般', '', '5147', '5250', '10397']
 ['は', '助詞', '係助詞', '', '', '-994', '3123', '12526']
 ['もう', '副詞', '', '', '', '-1851', '4259', '14934']
@@ -121,16 +119,15 @@ if __name__ == '__main__':
 ['ない', '助動詞', '', '', '', '4517', '-8053', '19912']
 ['じゃ', '助動詞', '', '', '', '1848', '744', '22504']
 ['ない', '形容詞', '非自立可能', '', '', '2107', '-5702', '18909']
-['&lt;EOS>', '', '', '', '', '0', '2568', '21477']
+['&lt;EOS&gt;', '', '', '', '', '0', '2568', '21477']
 </code></pre>
 
 なお、マニュアル [1] (の 1.) にある通り、出力フォーマットは使用している辞書の設定ファイル (例えば <code class="language-">C:/Program Files/MeCab/dic/unidic-csj-3.1.1-full/dicrc</code>) に定義することもできる。以下 3 行を追記した上で <code class="language-python">self.tagger = MeCab.Tagger(f'-d "{dict_path}" -O hoge')</code> とタガーを生成しても同じ結果が得られる。
 <pre class="language-text"><code>
 node-format-hoge = %m, %f[0], %f[1], %f[2], %f[3], %c, %pC, %pc\n
-bos-format-hoge = &lt;BOS>, , , , , %c, 0, %pc\n
-eos-format-hoge = &lt;EOS>, , , , , %c, %pC, %pc
+bos-format-hoge = &lt;BOS&gt;, , , , , %c, 0, %pc\n
+eos-format-hoge = &lt;EOS&gt;, , , , , %c, %pC, %pc
 </code></pre>
-
 </div>
 </main>
 </div>

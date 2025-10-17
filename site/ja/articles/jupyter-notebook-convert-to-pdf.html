@@ -8,8 +8,8 @@
 <link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" referrerpolicy="no-referrer" rel="stylesheet"/>
 <script crossorigin="anonymous" defer="" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
 <script crossorigin="anonymous" defer="" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
-<link rel="stylesheet" type="text/css" href="../../css/style.css?v=2025-10-09">
-<link rel="stylesheet" type="text/css" href="../../css/cookie-box.css?v=2025-10-09">
+<link href="../../css/style.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
 <script data-lang="ja" data-mainpage="false" defer="" id="app" src="../../funcs.js"></script>
 </head>
 <body>
@@ -47,7 +47,6 @@ Jupyter Notebook を PDF に変換する方法は色々ある (以下)。この�
 <li>方法 2. の課題 (a) を克服したい場合は、一旦コマンドまたはブラウザ上のメニューで HTML に変換し、この段階でコードの行頭の空白を明示的に記号に置換しておくのが一つの方法である (コードをコピー＆ペースト後に記号を空白に再置換する必要はある)。必要なら、その他の好きな修正もできる。あとは修正した HTML をブラウザの印刷メニューから OR ブラウザのヘッドレスモードを呼び出して PDF に印刷すればよい (<a href="https://qiita.com/CookieBox26/items/c73c164863fb57f63887#fn-1">参考</a>)。</li>
 <li>さらに方法 2. の課題 (b) も克服したい場合は、ブラウザ操作ライブラリで用紙サイズや余白や倍率を指定して変換するのが一つの方法である。</li>
 </ol>
-
 <h2>参考文献</h2>
 <ol class="ref small"><li>Using as a command line tool — nbconvert 7.16.6 documentation, <a class="asis" href="https://nbconvert.readthedocs.io/en/latest/usage.html"></a>, 2025年10月9日参照.</li><li>Page | Playwright Python#page-pdf, <a class="asis" href="https://playwright.dev/python/docs/api/class-page?#page-pdf"></a>, 2025年10月9日参照.</li></ol>
 <h2>Jupyter Notebook を HTML 経由で PDF に変換するスクリプトの例 (Playwright 使用)</h2>
@@ -57,7 +56,6 @@ Jupyter Notebook を PDF に変換する方法は色々ある (以下)。この�
 <li>中間 HTML への加工処理 [2a] [2b] [2c] が不要な場合は Beautiful Soup 4 は不要であり、<code class="language-python">html_path.read_text(encoding='utf8')</code> をそのまま <code class="language-python">page.set_content()</code> に渡せばよい。ただし [2a] を省くと PDF からコードをコピーした際にインデント情報が失われる。</li>
 </ul>
 <script src="https://gist.github.com/CookieBox26/835c16fb140391d49120f2cbbde69e3e.js"></script>
-
 </div>
 </main>
 </div>
