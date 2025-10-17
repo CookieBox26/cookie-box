@@ -1,17 +1,31 @@
-function createSidebar(mainPage = false, lang = 'ja') {
-    let content = '';
+function createSidebar(theme = 'cookie-box', mainPage = false, lang = 'ja') {
     let indexUrl = mainPage ? 'index.html' : '../index.html';
-    let back = `<a class="logo" href="${indexUrl}">&#x1f36a;Cookie Box</a>`;
-    let gitHub = '<a href="https://github.com/CookieBox26/cookie-box/issues">Issues</a>';
+    let back = `<a class="logo" href="${indexUrl}"></a>`;
+    let lightDark0 = '<span id="mode-toggle-0">&#x1f317;</span>';
+    let lightDark1 = '<a id="mode-toggle-1">ライト・ダーク切替</a>';
+    let gitHub;
+    switch (theme) {
+        case 'cookipedia':
+            gitHub = '<a href="https://github.com/CookieBox26/cookipedia/issues">Issues</a>';
+            break;
+        default:
+            gitHub = '<a href="https://github.com/CookieBox26/cookie-box/issues">Issues</a>';
+    }
+
+    let content = '';
     content += `<h2 class="logo">${back}</h2>`;
     if (!mainPage) {
         content += `<p>ご指摘等は ${gitHub} までご連絡ください</p>`;
-        document.getElementById('smartphone-header').innerHTML += back;
+        document.getElementById('smartphone-header').innerHTML += back + lightDark0;
+    } else {
+        document.getElementById('smartphone-header').innerHTML += '<span></span>' + lightDark0;
     }
+
+    content += `<p>${lightDark1}</p>`;
     content += '<p><a href="#">ページの一番上に戻る</a></p>';
     let index = '<h5>ページ内の小見出し一覧</h5>';
     const allHeaders = document.querySelectorAll('h2, h3');
-    for (var i=0; i<allHeaders.length; ++i) {
+    for (var i = 0; i < allHeaders.length; ++i) {
         index += '<p class="';
         if (allHeaders[i].tagName == 'H3') {
             index += 'indent';
@@ -30,6 +44,18 @@ function createSidebar(mainPage = false, lang = 'ja') {
     } else {
         document.getElementById('sidebar').innerHTML += content;
     }
+
+    document.documentElement.setAttribute('data-mode', 'dark');
+    const saved = localStorage.getItem('mode');
+    if (saved) document.documentElement.setAttribute('data-mode', saved);
+    for (var i = 0; i < 2; ++i) {
+        document.getElementById(`mode-toggle-${i}`).addEventListener('click', () => {
+            const cur = document.documentElement.getAttribute('data-mode');
+            const next = cur === 'dark' ? 'light' : 'dark';
+            document.documentElement.setAttribute('data-mode', next);
+            localStorage.setItem('mode', next);
+        });
+    }
 }
 
 function setButton(id, handle) {
@@ -44,6 +70,17 @@ function setButtonOpenClose(id0, id1) {
     setButton(id0, () => {
         target.style.display = (target.style.display == "none") ? "block" : "none";
     });
+}
+
+function loadMathJax() {
+    window.MathJax = {tex: {inlineMath: [['$', '$']]}};
+    const script = document.createElement('script');
+    script.src = "https://cdnjs.cloudflare.com/ajax/libs/mathjax/4.0.0/tex-chtml.min.js";
+    script.defer = true;
+    script.crossOrigin = "anonymous";
+    script.referrerPolicy = "no-referrer";
+    script.integrity = "sha512-cHFHvgPwgoSbpMuTqgZCOWHzoFqt48aXErA98EcvAiZdN6v2bz416BjOqhZJ4tm+QzVkdeLY6NpEWYEjHBx49w==";
+    document.head.appendChild(script);
 }
 
 function secureExternalLinks(root = document) {
@@ -70,7 +107,8 @@ function init(mainPage = false, lang = 'ja') {
 
 document.addEventListener('DOMContentLoaded', () => {
     const s = document.getElementById('app');
-    init(s?.dataset.mainpage === 'true', s?.dataset.lang || 'ja');
+    init(s?.dataset.theme || 'cookie-box', s?.dataset.mainpage === 'true', s?.dataset.lang || 'ja');
+    if (s?.dataset.mathjax === 'true') loadMathJax();
 });
 
 (function () {

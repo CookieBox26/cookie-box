@@ -1,7 +1,9 @@
 .jupyter table {
+  border: 0;
+  background: #ffffff;
+  color: #1f2328;
   border-collapse: collapse;
   border-spacing: 0;
-  border: none;
   font-size: 0.88em;
   table-layout: fixed;
   margin-bottom: 1em;
