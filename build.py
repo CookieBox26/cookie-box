@@ -27,10 +27,7 @@ if __name__ == '__main__':
     lang_root = work_root / 'site/ja'
     lang_template_root = work_root / 'templates/ja'
     last_counts_path = work_root / '.last_counts.toml'
-    IndexPage.additional_context = CategoryPage.additional_context = {
-        'css_timestamp': '2025-10-09',
-        'custom_css_timestamp': '2025-10-09',
-    }
+    IndexPage.additional_context = CategoryPage.additional_context = {}
 
     get_style_css(site_root / 'css/style.css')
     get_func_js(site_root / 'funcs.js')
