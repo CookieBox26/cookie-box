@@ -5,7 +5,7 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "f74b3fa4fbd36beff15b55e2ee2bd4928d06e0e5"
+# rev = "8aa35ee2ed4ab9730a2b104a47a9c5dd46dc64e9"
 # ///
 from pathlib import Path
 import subprocess
@@ -15,7 +15,7 @@ from cookies_site_utils import \
 
 
 def _run(command):
-    ret = subprocess.run(command, capture_output=True, text=True, check=True).stdout.strip()
+    ret = subprocess.run(command, capture_output=True, text=True, check=True).stdout.rstrip('\n')
     return ret[1:-1] if len(ret) >= 2 and ret[0] == ret[-1] == '"' else ret
 
 
