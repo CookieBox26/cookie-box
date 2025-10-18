@@ -5,36 +5,28 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "f414e6b959e4d3e48d7575d907a46988946a502e"
+# rev = "919862209a8ef09fb21c28eda45ce14b6875d7bb"
 # ///
 from pathlib import Path
 import subprocess
-from cookies_site_utils import \
-    get_style_css, get_func_js, \
-    Page, IndexPage, CategoryPage, Sitemap, validate, index_generation_context
-
-
-def _run(command):
-    ret = subprocess.run(command, capture_output=True, text=True, check=True).stdout.rstrip('\n')
-    return ret[1:-1] if len(ret) >= 2 and ret[0] == ret[-1] == '"' else ret
+from cookies_site_utils import index_generation, IndexPage, Sitemap, validate
 
 
 if __name__ == '__main__':
     site_name = 'Cookie Box'
-    domain = 'https://cookie-box.info/'
     work_root = Path(__file__).resolve().parent
     site_root = work_root / 'site'
-    lang_root = work_root / 'site/ja'
+    style_css = site_root / 'css/style.css'
+    funcs_js = site_root / 'funcs.js'
+    lang_root = site_root / 'ja'
     lang_template_root = work_root / 'templates/ja'
     last_counts_path = work_root / '.last_counts.toml'
-    IndexPage.additional_context = CategoryPage.additional_context = {}
+    domain = 'https://cookie-box.info/'
 
-    get_style_css(site_root / 'css/style.css')
-    get_func_js(site_root / 'funcs.js')
-
-    # Page.force_keep_timestamp = True  # メンテナンス用
-
-    with index_generation_context(site_root, site_name, last_counts_path, domain):
+    with index_generation(
+        site_name, site_root, style_css, funcs_js, last_counts_path, domain,
+        force_keep_timestamp=False,  # CSS, JS のメンテナンスだけで記事内容の更新がない時 True に
+    ):
         # 日本語インデックスページ生成
         index_ja = IndexPage(lang_root, lang_template_root)
         # サイトマップ生成
@@ -46,10 +38,9 @@ if __name__ == '__main__':
     validate(site_root / 'css', ['style.css', 'cookie-box.css', 'jupyter.css'], [])
 
     # ローカルと HEAD に差分がないことの確認
-    ret = _run(['git', 'status', '-s'])
+    _run = lambda command: subprocess.run(command, capture_output=True, text=True, check=True)
+    ret = _run(['git', 'status', '-s']).stdout.rstrip('\n')
     if ret != '':
-        ret_diff = _run(['git', 'diff', '--name-only'])
+        ret_diff = _run(['git', 'diff', '--name-only']).stdout.rstrip('\n')
         msg = 'Unstaged changes detected' if ret_diff != '' else 'No unstaged changes'
-        # if ret_diff != '':
-        #     print(_run(['git', 'diff']))
         raise ValueError(f'Differences between HEAD and working tree ({msg})\n{ret}')
