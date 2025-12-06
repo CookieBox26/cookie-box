@@ -1,0 +1,76 @@
+<!DOCTYPE HTML>
+
+<html lang="ja">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>WinSCP の機能で FTP/FTPS ディレクトリ同期をバッチ実行する方法 - Cookie Box</title>
+<link crossorigin="anonymous" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-coy.min.css" integrity="sha512-LOT5F67SMZVdXMrvQe4S1ZHu5l6xk3CST2qqno9kY329OsJBBpybnq+fM9qG4ZSaNzPOjoGzHAeBamSSJyyuZg==" referrerpolicy="no-referrer" rel="stylesheet"/>
+<script crossorigin="anonymous" defer="" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script crossorigin="anonymous" defer="" integrity="sha512-AKaNmg8COK0zEbjTdMHJAPJ0z6VeNqvRvH4/d5M4sHJbQQUToMBtodq4HaV4fa+WV2UTfoperElm66c9/8cKmQ==" referrerpolicy="no-referrer" src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-python.min.js"></script>
+<link href="../../css/style.css?v=2025-10-21" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2025-11-16" rel="stylesheet" type="text/css"/>
+<script data-lang="ja" data-mainpage="false" defer="" id="app" src="../../funcs.js?v=2025-10-18"></script>
+</head>
+<body>
+<div class="container">
+<div id="sidebar"></div>
+<main class="main">
+<div id="smartphone-header"></div>
+<div class="item">
+<h1>WinSCP の機能で FTP/FTPS ディレクトリ同期をバッチ実行する方法</h1>
+<div class="categories"><a href="../categories/winscp.html">WinSCP</a>, <a href="../categories/powershell.html">PowerShell</a></div>
+<div class="summary">
+🍪この記事の内容:
+<ul>
+<li>WinSCP の機能で FTP/FTPS ディレクトリ同期をバッチ実行するスクリプトを幾つか示す。</li>
+<ul>
+<li>WinSCP のコマンドで同期するバッチファイル (プレビューと同期のいずれかを実行)。</li>
+<li>WinSCP の .NET アセンブリで同期する PowerShell スクリプト (プレビューも同期も実行)。</li>
+</ul>
+</ul>
+</div>
+
+<ul>
+<li class="doughnut">この記事ではリモート FTP(S) サーバがパスワード認証であることを前提としている。リモートサーバが SFTP 通信に対応していれば公開鍵認証で SFTP 通信すればよい。</li>
+<li class="chocolate">この記事は Qiita に投稿した以下の記事の再編集したものである。</li>
+<ul>
+<li><a href="https://qiita.com/CookieBox26/items/4767e2d0714ef4940f4e">【WinSCP】FTPS ディレクトリ同期バッチ例 (WinSCP スクリプト使用例 ＆ .NETアセンブリ使用例) - Qiita</a></li>
+</ul>
+</ul>
+
+Windows マシンとリモート FTP サーバをディレクトリ同期するには、<a href="https://winscp.net/eng/docs/lang:jp">WinSCP</a> の GUI で FTP サーバに接続し、メニューの「コマンド」から「同期」を選択すればよい。が、WinSCP はコマンドラインインタフェースも提供しており [1]、これを使ったバッチファイルを書けば叩くだけでファイル同期できて便利である。<br/>
+<br/>
+ただ、このバッチファイルでは 1 回の接続でプレビューの確認と同期の両方をすることができない (ユーザ確認を待機できる WinSCP コマンドがないため)。そのため、本番の同期前に予め差分を確認したいときはパスワード入力が 2 回必要になり面倒である (無論、パスワードのベタ書きや平文保持をすれば入力は不要になるがセキュリティ上推奨されない)。この課題は PowerShell から WinSCP の .NET アセンブリ [2] を使用すると解消できる。この場合は FTP サーバに接続して何を実行するかを柔軟に記述できる。
+
+<h2>参考文献</h2>
+<ol class="ref small">
+<li>Scripting and Task Automation :: WinSCP, <a class="asis" href="https://winscp.net/eng/docs/scripting"></a>, 2025年12月6日参照.</li>
+<li>WinSCP .NET Assembly and COM Library :: WinSCP, <a class="asis" href="https://winscp.net/eng/docs/library"></a>, 2025年12月6日参照.</li>
+</ol>
+
+<h2>WinSCP のコマンドで FTPS ディレクトリ同期するバッチファイル (1 回の接続でプレビューと同期のいずれかを実行)</h2>
+以下のバッチファイルはローカルとリモートの差分をプレビューする。<code class="language-">-preview</code> を取り除いて実行すると同期する。実行時に WinSCP にパスワードの入力を促される。
+
+<pre class="language-python"><code>
+@echo off
+"C:\Program Files (x86)\WinSCP\WinSCP.com" /log=%~dp0"log.txt" /ini=nul /command ^
+  "open ftps://{FTPアカウント}@{FTPサーバ名} -explicit -rawsettings Utf=1" ^
+  "synchronize remote "%~dp0"site /home/{FTPアカウント}/www -preview" ^
+  "exit"
+pause
+</code></pre>
+
+<ul>
+<li class="chocolate">なお、上記の <code class="language-">ftps://{FTPアカウント}@{FTPサーバ名}</code> の箇所を <code class="language-">ftps://{FTPアカウント}:{パスワード}@{FTPサーバ名}</code> にすればパスワードを訊かれなくなる。が、セキュリティ上、バッチファイルにパスワードを書き込むことは推奨されない。</li>
+</ul>
+
+<h2>WinSCP の .NET アセンブリで FTPS ディレクトリ同期する PowerShell スクリプト (1 回の接続でプレビューも同期も実行)</h2>
+以下の PowerShell スクリプトはパスワード入力を促した後、1 回の接続でプレビューも同期もする。自分で接続を管理するため一旦パスワードを受け取っているが、<code class="language-">-AsSecureString</code> にしているので、画面上伏字になり、平文では保持されない。接続時に平文にコンバートし削除している。
+<script src="https://gist.github.com/CookieBox26/906e75e5c227c58043fa1aec6990656c.js"></script>
+
+</div>
+</main>
+</div>
+</body>
+</html>

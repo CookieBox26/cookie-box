@@ -19,6 +19,11 @@ timestamp = "2025-10-02"
 count = 7311
 
 [[pages]]
+rel_path = "ja/articles/winscp-ftps-sync-batch.html"
+timestamp = "2025-12-06"
+count = 4107
+
+[[pages]]
 rel_path = "ja/categories/jupyter-notebook.html"
 timestamp = "2025-10-09"
 count = 1026
@@ -34,12 +39,22 @@ timestamp = "2025-10-02"
 count = 850
 
 [[pages]]
+rel_path = "ja/categories/powershell.html"
+timestamp = "2025-11-16"
+count = 874
+
+[[pages]]
 rel_path = "ja/categories/redshift.html"
 timestamp = "2025-10-02"
 count = 860
 
 [[pages]]
+rel_path = "ja/categories/winscp.html"
+timestamp = "2025-11-16"
+count = 862
+
+[[pages]]
 rel_path = "ja/index.html"
-timestamp = "2025-10-12"
-count = 2585
+timestamp = "2025-11-16"
+count = 3007
 

@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
 <loc>https://cookie-box.info/ja/index.html</loc>
-<lastmod>2025-10-12</lastmod>
+<lastmod>2025-11-16</lastmod>
 <changefreq>monthly</changefreq>
 <priority>1.0</priority>
 </url>
@@ -21,6 +21,12 @@
 <url>
 <loc>https://cookie-box.info/ja/articles/redshift-round-timestamp.html</loc>
 <lastmod>2025-10-02</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>https://cookie-box.info/ja/articles/winscp-ftps-sync-batch.html</loc>
+<lastmod>2025-12-06</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
@@ -49,8 +55,20 @@
 <priority>0.5</priority>
 </url>
 <url>
+<loc>https://cookie-box.info/ja/categories/powershell.html</loc>
+<lastmod>2025-11-16</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
 <loc>https://cookie-box.info/ja/categories/redshift.html</loc>
 <lastmod>2025-10-02</lastmod>
+<changefreq>monthly</changefreq>
+<priority>0.5</priority>
+</url>
+<url>
+<loc>https://cookie-box.info/ja/categories/winscp.html</loc>
+<lastmod>2025-11-16</lastmod>
 <changefreq>monthly</changefreq>
 <priority>0.5</priority>
 </url>
