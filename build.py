@@ -22,7 +22,7 @@ if __name__ == '__main__':
 
     with index_generation(
         site_root, style_css, funcs_js, last_counts_path, domain,
-        force_keep_timestamp=True,  # CSS, JS のメンテナンスだけで記事内容の更新がない時 True に
+        force_keep_timestamp=False,  # CSS, JS のメンテナンスだけで記事内容の更新がない時 True に
     ):
         # クッキパッドインデックスページ生成
         subsite_root = site_root / 'cookiepad'
