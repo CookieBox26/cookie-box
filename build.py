@@ -5,7 +5,7 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "e5283562e026142bbadd426ac08b94c9f319f746"
+# rev = "2a8229580bc1c7192925c0dd88166a8633a24d52"
 # ///
 from pathlib import Path
 import subprocess
@@ -13,29 +13,34 @@ from cookies_site_utils import index_generation, IndexPage, Sitemap, validate
 
 
 if __name__ == '__main__':
-    site_name = 'Cookie Box'
     work_root = Path(__file__).resolve().parent
     site_root = work_root / 'site'
     style_css = site_root / 'css/style.css'
     funcs_js = site_root / 'funcs.js'
-    lang_root = site_root / 'ja'
-    lang_template_root = work_root / 'templates/ja'
     last_counts_path = work_root / '.last_counts.toml'
     domain = 'https://cookie-box.info/'
 
     with index_generation(
-        site_name, site_root, style_css, funcs_js, last_counts_path, domain,
-        force_keep_timestamp=False,  # CSS, JS のメンテナンスだけで記事内容の更新がない時 True に
+        site_root, style_css, funcs_js, last_counts_path, domain,
+        force_keep_timestamp=True,  # CSS, JS のメンテナンスだけで記事内容の更新がない時 True に
     ):
-        # 日本語インデックスページ生成
-        index_ja = IndexPage(lang_root, lang_template_root)
-        # サイトマップ生成
-        Sitemap(index_ja.get_pages())
+        # クッキパッドインデックスページ生成
+        subsite_root = site_root / 'cookiepad'
+        subsite_template_root = work_root / 'templates/cookiepad'
+        subsite_name = 'Cookiepad'
+        index_cookiepad = IndexPage(subsite_root)
+        index_cookiepad.build(subsite_template_root, subsite_name)
+        validate(subsite_root, ['index.html'], ['articles', 'categories'])
 
-    # 不要物チェック
-    validate(lang_root, ['index.html'], ['articles', 'categories'])
-    validate(site_root, ['funcs.js', 'robots.txt', 'sitemap.xml'], ['css', 'ja'])
-    validate(site_root / 'css', ['style.css', 'cookie-box.css', 'jupyter.css'], [])
+        # 総合インデックスページ作成
+        site_name = 'Cookie Box'
+        index_ = IndexPage(site_root)
+        index_.eval(site_name)
+        validate(site_root, ['index.html', 'funcs.js', 'robots.txt', 'sitemap.xml'], ['css', 'cookiepad'])
+        validate(site_root / 'css', ['style.css', 'cookie-box.css', 'cookiepad.css', 'jupyter.css'], [])
+
+        # サイトマップ生成
+        Sitemap([index_] + index_cookiepad.get_pages())
 
     # ローカルと HEAD に差分がないことの確認
     _run = lambda command: subprocess.run(command, capture_output=True, text=True, check=True)

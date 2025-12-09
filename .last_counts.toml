@@ -1,60 +1,65 @@
 [[pages]]
-rel_path = "ja/articles/jupyter-notebook-convert-to-pdf.html"
+rel_path = "cookiepad/articles/jupyter-notebook-convert-to-pdf.html"
 timestamp = "2025-10-09"
-count = 4568
+count = 4636
 
 [[pages]]
-rel_path = "ja/articles/mecab-parse.html"
+rel_path = "cookiepad/articles/mecab-parse.html"
 timestamp = "2025-10-12"
-count = 5907
+count = 5975
 
 [[pages]]
-rel_path = "ja/articles/pandas-styler.html"
+rel_path = "cookiepad/articles/pandas-styler.html"
 timestamp = "2025-10-02"
-count = 13802
+count = 13870
 
 [[pages]]
-rel_path = "ja/articles/redshift-round-timestamp.html"
+rel_path = "cookiepad/articles/redshift-round-timestamp.html"
 timestamp = "2025-10-02"
-count = 7266
+count = 7334
 
 [[pages]]
-rel_path = "ja/articles/winscp-ftps-sync-batch.html"
+rel_path = "cookiepad/articles/winscp-ftps-sync-batch.html"
 timestamp = "2025-12-06"
-count = 4066
+count = 4134
 
 [[pages]]
-rel_path = "ja/categories/jupyter-notebook.html"
+rel_path = "cookiepad/categories/jupyter-notebook.html"
 timestamp = "2025-10-09"
-count = 1009
+count = 1077
 
 [[pages]]
-rel_path = "ja/categories/mecab.html"
+rel_path = "cookiepad/categories/mecab.html"
 timestamp = "2025-10-12"
-count = 817
+count = 885
 
 [[pages]]
-rel_path = "ja/categories/pandas.html"
+rel_path = "cookiepad/categories/pandas.html"
 timestamp = "2025-10-02"
-count = 834
+count = 902
 
 [[pages]]
-rel_path = "ja/categories/powershell.html"
+rel_path = "cookiepad/categories/powershell.html"
 timestamp = "2025-11-16"
-count = 858
+count = 926
 
 [[pages]]
-rel_path = "ja/categories/redshift.html"
+rel_path = "cookiepad/categories/redshift.html"
 timestamp = "2025-10-02"
-count = 844
+count = 912
 
 [[pages]]
-rel_path = "ja/categories/winscp.html"
+rel_path = "cookiepad/categories/winscp.html"
 timestamp = "2025-11-16"
-count = 846
+count = 914
 
 [[pages]]
-rel_path = "ja/index.html"
+rel_path = "cookiepad/index.html"
 timestamp = "2025-11-16"
-count = 2962
+count = 3061
+
+[[pages]]
+rel_path = "index.html"
+timestamp = "2025-12-09"
+count = 890
 

@@ -1,0 +1,23 @@
+a.index-link:before {
+  content: '\01f36aCookiepad';
+}
+body:after {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: "";
+  z-index: -2;
+}
+body:after {
+  background-image:
+    radial-gradient(transparent 2px, var(--surface) 2px),
+    linear-gradient(var(--surface), var(--summary-surface) 60%, var(--border));
+  background-position:
+    4px 4px,
+    0 0;
+  background-size: 
+    12px 12px,
+    contain;
+}
