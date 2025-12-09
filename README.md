@@ -1,12 +1,12 @@
 # Cookie Box
 
-[https://cookie-box.info/ja/index.html](https://cookie-box.info/ja/index.html)
+[https://cookie-box.info/](https://cookie-box.info/)
 
 ## Article Update Procedure
 
 ### Add or Edit Articles
 
-Create or modify the file at `site/ja/articles/xxxxxx.html`.
+Create or modify the file at `site/cookiepad/articles/xxxxxx.html`.
 
 ### Build Index and Sitemap
 
