@@ -6,6 +6,8 @@ if __name__ == '__main__':
     _run(['git', 'add', '.last_counts.toml'])
     _run(['git', 'add', 'add.py'])
     _run(['git', 'add', 'build.py'])
+    _run(['git', 'add', 'site/funcs.js'])
+    _run(['git', 'add', 'site/css/style.css'])
     _run(['git', 'add', 'site/css/cookie-box.css'])
     _run(['git', 'add', 'site/index.html'])
 
