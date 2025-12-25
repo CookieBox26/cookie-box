@@ -1,6 +1,9 @@
 a.index-link:before {
   content: '\01f36aCookiepad';
 }
+html, body {
+  height: 100%;
+}
 body:after {
   position: fixed;
   top: 0;
@@ -13,11 +16,11 @@ body:after {
 body:after {
   background-image:
     radial-gradient(transparent 2px, var(--surface) 2px),
-    linear-gradient(var(--surface), var(--summary-surface) 60%, var(--border));
+    linear-gradient(var(--surface), var(--light-gray) 30%, var(--summary-surface) 60%, var(--gray));
   background-position:
     4px 4px,
     0 0;
   background-size: 
-    12px 12px,
+    14px 14px,
     contain;
 }

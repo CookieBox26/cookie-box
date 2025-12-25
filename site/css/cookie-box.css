@@ -1,6 +1,11 @@
+:root {
+  --gray: #c9cfd5;
+  --light-gray: #eef1f2;
+}
+:root[data-mode='dark'] {
+  --gray: #53606c;
+  --light-gray: #374149;
+}
 a.top-link:before, a.index-link:before {
   content: 'Cookie Box';
-}
-html, body {
-  height: 100%;
 }

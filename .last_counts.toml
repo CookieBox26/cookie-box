@@ -4,6 +4,11 @@ timestamp = "2025-10-09"
 count = 3861
 
 [[pages]]
+rel_path = "cookiepad/articles/lightgbm-multiclass-classification.html"
+timestamp = "2025-12-25"
+count = 11097
+
+[[pages]]
 rel_path = "cookiepad/articles/mecab-parse.html"
 timestamp = "2025-10-12"
 count = 5200
@@ -27,6 +32,11 @@ count = 3357
 rel_path = "cookiepad/categories/jupyter-notebook.html"
 timestamp = "2025-10-09"
 count = 1077
+
+[[pages]]
+rel_path = "cookiepad/categories/lightgbm.html"
+timestamp = "2025-12-25"
+count = 913
 
 [[pages]]
 rel_path = "cookiepad/categories/mecab.html"
@@ -55,11 +65,16 @@ count = 914
 
 [[pages]]
 rel_path = "cookiepad/index.html"
-timestamp = "2025-12-12"
-count = 3075
+timestamp = "2025-12-25"
+count = 3412
+
+[[pages]]
+rel_path = "cookipedia/index.html"
+timestamp = "2025-12-15"
+count = 1329
 
 [[pages]]
 rel_path = "index.html"
-timestamp = "2025-12-09"
-count = 890
+timestamp = "2025-12-25"
+count = 954
 
