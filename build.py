@@ -5,7 +5,7 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "5bffa1288fa90dc1bf155c473c54f55909a664f0"
+# rev = "7a25c9d6e466867d3c90bd403c67e2fdc4cfa965"
 # ///
 from pathlib import Path
 import subprocess
