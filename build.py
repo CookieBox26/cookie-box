@@ -26,21 +26,35 @@ if __name__ == '__main__':
     ):
         # クッキパッドインデックスページ生成
         subsite_root = site_root / 'cookiepad'
-        subsite_template_root = work_root / 'templates/cookiepad'
-        subsite_name = 'Cookiepad'
         index_cookiepad = IndexPage(subsite_root)
-        index_cookiepad.build(subsite_template_root, subsite_name)
+        index_cookiepad.build(work_root / 'templates/cookiepad', 'Cookiepad')
         validate(subsite_root, ['index.html'], ['articles', 'categories'])
+
+        # クッキペディアインデックスページ生成
+        # subsite_root = site_root / 'cookipedia'
+        # index_cookipedia = IndexPage(subsite_root)
+        # index_cookipedia.build(work_root / 'templates/cookipedia', 'Cookipedia β-version')
+        # validate(subsite_root, ['index.html'], ['articles', 'categories'])
 
         # 総合インデックスページ作成
         site_name = 'Cookie Box'
         index_ = IndexPage(site_root)
         index_.eval(site_name)
-        validate(site_root, ['index.html', 'funcs.js', 'robots.txt', 'sitemap.xml'], ['css', 'cookiepad'])
-        validate(site_root / 'css', ['style.css', 'cookie-box.css', 'cookiepad.css', 'jupyter.css'], [])
+        validate(
+            site_root,
+            ['index.html', 'funcs.js', 'robots.txt', 'sitemap.xml'],
+            ['css', 'cookiepad', 'cookipedia'],
+        )
+        validate(
+            site_root / 'css',
+            ['style.css', 'cookie-box.css', 'cookiepad.css', 'cookipedia.css', 'jupyter.css'],
+            [],
+        )
 
         # サイトマップ生成
-        Sitemap([index_] + index_cookiepad.get_pages())
+        Sitemap(
+            [index_] + index_cookiepad.get_pages()  # + index_cookipedia.get_pages()
+        )
 
     # ローカルと HEAD に差分がないことの確認
     _run = lambda command: subprocess.run(command, capture_output=True, text=True, check=True)
