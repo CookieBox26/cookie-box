@@ -16,7 +16,7 @@ body:after {
 body:after {
   background-image:
     radial-gradient(transparent 2px, var(--surface) 2px),
-    linear-gradient(var(--surface), var(--light-gray) 30%, var(--summary-surface) 60%, var(--gray));
+    linear-gradient(var(--surface), var(--light-gray) 30%, var(--gray-surface) 60%, var(--gray));
   background-position:
     4px 4px,
     0 0;

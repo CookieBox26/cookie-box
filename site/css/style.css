@@ -1,8 +1,12 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;600&family=Armata&family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=M+PLUS+1+Code:wght@100..700&display=swap');
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Armata&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=M+PLUS+1+Code:wght@400;600&display=swap");
 :root {
   --surface: #ffffff;
   --main-surface: #ffffff;
-  --summary-surface: #e9edee;
+  --gray-surface: #e9edee;
   --text: #16181c;
   --text-link: #01889f;
   --border: #a9b2bc;
@@ -20,13 +24,17 @@
   --keyword: #1990b8;
   --number: #c92c2c;
   --operator: #a67f59;
-  --doughnut: #d2691e;
-  --chocolate: #83898f;
+  --gray-text: #83898f;
+  --red-text: #fc4541;
+  --yellow-surface: rgba(241, 233, 14, 0.45);
+  --yellow-border: #cac30b;
+  --blue-surface: rgba(87, 180, 219, 0.35);
+  --blue-border: #1d94c8;
 }
 :root[data-mode='dark'] {
   --surface: #2f373e;  /* #23292f */
   --main-surface: #2f373e;
-  --summary-surface: #404b55;
+  --gray-surface: #404b55;
   --text: #f5f7f8;
   --text-link: #3fc2d9;
   --border: #667584;
@@ -39,8 +47,10 @@
   --keyword: #5bc0e1;
   --number: #e46c6c;
   --operator: #deb14f;
-  --doughnut: #cc8a43;
-  --chocolate: #9ba5af;
+  --gray-text: #9ba5af;
+  --red-text: #fd6c6a;
+  --yellow-surface: rgba(241, 233, 14, 0.25);
+  --blue-surface: rgba(87, 180, 219, 0.25);
 }
 .mode-btn {
   user-select: none;
@@ -59,14 +69,13 @@
 [id^="mode-dark-"] {
   background: #2f373e;
 }
-
 body {
   background: var(--surface);
   color: var(--text);
   font-family: var(--font-family);
   font-weight: var(--font-weight);
   line-height: 1.3;
-  font-size: 0.92em;
+  font-size: 14px;
   letter-spacing: 0.01em;
   margin: 0;
 }
@@ -80,7 +89,6 @@ a:hover {
 a.asis::after {
   content: attr(href);
 }
-
 /*----- Heading styles -----*/
 h1, h2, h3, h4, h5 {
   font-weight: var(--font-weight-header);
@@ -99,14 +107,8 @@ h3, h4 {
   margin-top: 0.9em;
   border-bottom: 1px dashed var(--border);
 }
-h5 {
-  margin: 1.35em 0 0.5em;
-  font-size: 1em;
-  padding-bottom: 0.3em;
-  border-bottom: 1px solid var(--border);
-}
 h1.title {
-  font-size: 2.4em;
+  font-size: 2.2em;
 }
 h2.logo {
   margin-top: 0.15em;
@@ -126,7 +128,6 @@ div.top-link {
   padding-top: 0.5em;
   font-size: 0.9em;
 }
-
 div#smartphone-header {
   display: none;
 }
@@ -140,11 +141,21 @@ div#sidebar {
   max-width: 200px;
   top: 0;
   position: sticky;
-  padding: 20px;
-  font-size: 0.94em;
+  padding: 15px 20px;
+  font-size: 13.5px;
+}
+div#sidebar h5 {
+  margin: 1.25em 0 0.5em;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 0.25em;
+  font-size: 14px;
 }
 div#sidebar p {
-  margin: 0 0 0.3em;
+  margin: 0.3em 0 0;
+}
+div#sidebar p.indent {
+  margin: 0.3em 0 0 1em;
+  font-size: 13px;
 }
 .container {
   max-width: 100%;
@@ -169,7 +180,6 @@ div#sidebar p {
   margin: 0 auto;
   max-width: 100%;
 }
-
 table {
   border-collapse: collapse;
 }
@@ -210,6 +220,14 @@ ol.ref > li:before {
   left: -2.25em;
   counter-increment: li;
   content: '['counter(li)']';
+}
+ol.ref ul {
+  margin-block-start: 0.25em;
+  margin-block-end: 0.25em;
+}
+dl ul, dl ol {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
 }
 ol.parenthesis {
   counter-reset: li;
@@ -252,58 +270,131 @@ ol.note > li:before {
   counter-increment: li;
   content: '[注釈'counter(li)']';
 }
-
-span.doughnut {
-  color: var(--doughnut);
+/* 参考文献 (dl) */
+dl.ref {
+  padding-left: 0.25em;
+  display: grid;
+  grid-template-columns: auto 1fr;
 }
-li.doughnut {
-  position: relative;
-  list-style: none;
-  color: var(--doughnut);
+dl.ref a {
+  word-break: break-all;
 }
-li.doughnut::before {
-  position: absolute;
-  content: '\01f369 ';
-  left: -1.5em;
+dl.ref > dt {
+  grid-column: 1;
 }
-li.doughnut + ul {
-  color: var(--doughnut);
+dl.ref > dt:before {
+  left: 0.25em;
+  content: '[';
 }
-
-span.chocolate {
-  color: var(--chocolate);
+dl.ref > dt:after {
+  left: 0.25em;
+  content: ']';
 }
-li.chocolate {
-  position: relative;
-  list-style: none;
-  color: var(--chocolate);
+dl.ref > dd {
+  grid-column: 2;
+  margin: 0;
+  padding-left: 0.5em;
 }
-li.chocolate::before {
-  position: absolute;
-  content: '\01f36b ';
-  left: -1.5em;
-}
-li.chocolate + ul {
-  color: var(--chocolate);
-}
-
-.small {
+/* 脚注 (dl) */
+dl.footnote {
   font-size: 88%;
+  padding-left: 0.25em;
+  display: grid;
+  grid-template-columns: auto 1fr;
+}
+dl.footnote a {
+  word-break: break-all;
+}
+dl.footnote > dt {
+  grid-column: 1;
+}
+dl.footnote > dt:before {
+  left: 0.25em;
+  content: '[脚注';
+}
+dl.footnote > dt:after {
+  left: 0.25em;
+  content: ']';
+}
+dl.footnote > dd {
+  grid-column: 2;
+  margin: 0;
+  padding-left: 0.5em;
+}
+.MathJax {
+  font-size: 1.1em !important;
+}
+.overflow-x-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+.small {
+  font-size: 90%;
 }
 div.categories:before {
   content: 'カテゴリ: ';
 }
-div.summary {
-  background: var(--summary-surface);
+li.red, span.red {
+  color: var(--red-text);
+}
+li.gray, span.gray {
+  color: var(--gray-text);
+}
+div.gray {
+  background: var(--gray-surface);
   border: 1px solid var(--border);
-  margin: 0.5em 0 1.0em;
+  margin: 1.0em 0;
   padding: 0.75em 0.75em 0.75em;
 }
-div.summary > ul, div.summary > ol {
+div.yellow {
+  background: var(--yellow-surface);
+  border: 1px solid var(--yellow-border);
+  margin: 1.0em 0;
+  padding: 0.75em 0.75em 0.75em;
+}
+div.blue {
+  background: var(--blue-surface);
+  border: 1px solid var(--blue-border);
+  margin: 1.0em 0;
+  padding: 0.75em 0.75em 0.75em;
+}
+div.gray > ul, div.gray > ol,
+div.yellow > ul, div.yellow > ol,
+div.blue > ul, div.blue > ol {
   margin-block-start: 0.5em;
   margin-block-end: 0.25em;
 }
-
+div.warning {
+  position: relative;
+  padding-left: 2.5em;
+}
+div.warning::before {
+  content: "\26A0\FE0F";
+  position: absolute;
+  left: 0.75em;
+  top: 0.75em;
+}
+div.cookie {
+  position: relative;
+  padding-left: 2.5em;
+}
+div.cookie::before {
+  content: "\1F36A";
+  position: absolute;
+  left: 0.75em;
+  top: 0.75em;
+}
+div.info {
+  position: relative;
+  padding-left: 2.5em;
+}
+div.info::before {
+  content: "\2139\FE0F";
+  position: absolute;
+  left: 0.75em;
+  top: 0.75em;
+}
 span.index-ts {
   font-size: 0.8em;
   white-space: preserve nowrap;
@@ -311,7 +402,6 @@ span.index-ts {
 span.index-ts:before {
   content: 'Updated: ';
 }
-
 /* コードブロック・インラインコード共通 */
 code[class*="language-"] {
   font-family: var(--font-family-mono);
@@ -341,7 +431,6 @@ code[class*="language-"] {
 .token.number,.token.property,.token.symbol,.token.tag {
   color: var(--number);
 }
-
 /* コードブロック */
 pre[class*="language-"] {
   background: transparent !important;
@@ -359,17 +448,15 @@ pre.language-text>code {
 pre[class*="language-"]::before, pre[class*="language-"]::after {
   box-shadow: none !important;
 }
-
 /* インラインコード */
 :not(pre)>code[class*=language-] {
   padding-top: 0;
   padding-bottom: 0;
 }
 :not(pre)>code[class*=language-], :not(pre)>code[class*=language-] span {
-  background-color: var(--summary-surface) !important;
+  background-color: var(--gray-surface) !important;
   /* color: var(--text) !important; */
 }
-
 /* GitHub Gist */
 div.gist-data {
   border: 1px solid var(--border) !important;
@@ -412,7 +499,26 @@ span.pl-k {
 span.pl-s1, span.pl-smi {
   color: var(--text) !important;
 }
-
+.gist .gist-meta {
+  background: var(--surface) !important;
+}
+/* Figure */
+figure {
+  text-align: center;
+  margin: 1em auto;
+  counter-increment: fig;
+}
+figure figcaption {
+  font-size: 90%;
+}
+figure figcaption::before {
+  content: '図' counter(fig) '. ';
+}
+figure img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
 @media screen and (min-width: 540px) {
   .gist .blob-code-inner {
     font-size: 13.25px !important;

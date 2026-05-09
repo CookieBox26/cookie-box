@@ -5,10 +5,10 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Jupyter Notebook を PDF に変換する方法 - Cookiepad</title>
-<link href="../../css/style.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookie-box.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookiepad.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2025-12-25"></script>
+<link href="../../css/style.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookiepad.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2026-05-09"></script>
 </head>
 <body>
 <div class="container">
@@ -17,9 +17,12 @@
 <div id="smartphone-header"></div>
 <div class="item">
 <h1>Jupyter Notebook を PDF に変換する方法</h1>
-<div class="categories"><a href="../categories/jupyter-notebook.html">Jupyter Notebook</a></div>
-<div class="summary">
-🍪この記事の内容:
+
+<div class="categories">
+<a href="../categories/jupyter-notebook.html">Jupyter Notebook</a>
+</div>
+<div class="gray cookie">
+この記事の内容:
 <ul>
 <li>Jupyter Notebook を HTML 経由で PDF に変換する (Playwright 使用)。この方法は、</li>
 <ul>
@@ -29,31 +32,45 @@
 </ul>
 </ul>
 </div>
-
-Jupyter Notebook を PDF に変換する方法は色々ある (以下)。この記事には方法 4. で変換するスクリプトの例を示す。ただし、方法 2. で十分であればこちらのほうがチームメンバー全員がやりやすいはずである。
-
+Jupyter Notebook を PDF に変換する方法は色々ある (以下)。この記事には方法 4. で変換するスクリプトの例を示す。ただし、方法 2. で十分であればこちらのほうがチーム全員がやりやすいはずである。
 <ol>
-<li>Jupyter Notebook / JupyterLab をインストールすると自動的にノートブック変換パッケージ <a href="https://nbconvert.readthedocs.io/en/latest/install.html">nbconvert</a> もインストールされるので、<code class="language-">jupyter nbconvert --to pdf notebook.ipynb</code> (または Jupyter Notebook を開いていればブラウザ上のメニューからエクスポートしても同じ) というコマンドが用意されている。<span class="doughnut">が、この方法は LaTeX を経由するため LaTeX が必要である。また、HTML をレンダリングしないため、pandas.DataFrame (の Styler) をアウトプットセルに表示している場合は無視される。</span></li>
-<ul class="small">
-<li>なお、この方法で LaTeX テンプレートをカスタマイズする方法は以下を参照。</li>
-<ul>
-<li><a href="https://qiita.com/CookieBox26/items/00d4ece34240c1e9c849">Jupyter Notebook を PDF に変換するときのテンプレート修正 - Qiita</a></li>
-<li><a href="https://qiita.com/CookieBox26/items/06170d912bc018f84173">PDF 変換した Jupyter Notebook からコードをコピーするとインデントの空白がコピーできない問題への対処法 - Qiita</a></li>
-</ul>
-</ul>
-<li>Jupyter Notebook のメニューから印刷を選んで PDF に印刷する方法もある。これは内部的に HTML を経由するため LaTeX が不要で pandas.DataFrame もレンダリングされる。<span class="doughnut">ただし、(a) 印刷された PDF からテキストをコピーするとき空白が崩れることが多いので、コードをコピーしたい場合は不便である (これは 1. でも同様)。また、(b) ブラウザから他の Web ページを印刷するために用紙サイズや余白や倍率を変更した場合、設定を戻す必要がある。</span></li>
-<li>方法 2. の課題 (a) を克服したい場合は、一旦コマンドまたはブラウザ上のメニューで HTML に変換し、この段階でコードの行頭の空白を明示的に記号に置換しておくのが一つの方法である (コードをコピー＆ペースト後に記号を空白に再置換する必要はある)。必要なら、その他の好きな修正もできる。あとは修正した HTML をブラウザの印刷メニューから OR ブラウザのヘッドレスモードを呼び出して PDF に印刷すればよい (<a href="https://qiita.com/CookieBox26/items/c73c164863fb57f63887#fn-1">参考</a>)。</li>
+<li>Jupyter Notebook / JupyterLab をインストールすると自動的にノートブック変換パッケージ <a href="https://nbconvert.readthedocs.io/en/latest/install.html">nbconvert</a> もインストールされるので、<code class="language-">jupyter nbconvert --to pdf notebook.ipynb</code> (または Jupyter Notebook を開いていればブラウザ上のメニューからエクスポートしても同じ) というコマンドが用意されている。<span class="red">が、この方法は LaTeX を経由するため LaTeX が必要である。また、HTML をレンダリングしないため、pandas.DataFrame (の Styler) をアウトプットセルに表示している場合は無視される。</span> [脚注TIPS1]</li>
+<li>Jupyter Notebook のメニューから印刷を選んで PDF に印刷する方法もある。これは内部的に HTML を経由するため LaTeX が不要で pandas.DataFrame もレンダリングされる。<span class="red">ただし、(a) 印刷された PDF からテキストをコピーするとき空白が崩れることが多いので、コードをコピーしたい場合は不便である (これは 1. でも同様)。また、(b) ブラウザから他の Web ページを印刷するために用紙サイズや余白や倍率を変更した場合、設定を戻す必要がある。</span></li>
+<li>方法 2. の課題 (a) を克服したい場合は、一旦コマンドまたはブラウザ上のメニューで HTML に変換し、この段階でコードの行頭の空白を明示的に記号に置換しておくのが一つの方法である。必要なら、その他の好きな修正もできる。あとは修正した HTML をブラウザの印刷メニューから OR ブラウザのヘッドレスモードを呼び出して PDF に印刷すればよい。 [脚注TIPS2]</li>
 <li>さらに方法 2. の課題 (b) も克服したい場合は、ブラウザ操作ライブラリで用紙サイズや余白や倍率を指定して変換するのが一つの方法である。</li>
 </ol>
+
+
 <h2>参考文献</h2>
-<ol class="ref small"><li>Using as a command line tool — nbconvert 7.16.6 documentation, <a class="asis" href="https://nbconvert.readthedocs.io/en/latest/usage.html"></a>, 2025年10月9日参照.</li><li>Page | Playwright Python#page-pdf, <a class="asis" href="https://playwright.dev/python/docs/api/class-page?#page-pdf"></a>, 2025年10月9日参照.</li></ol>
+<ol class="ref small">
+<li>Using as a command line tool — nbconvert 7.16.6 documentation, <a class="asis" href="https://nbconvert.readthedocs.io/en/latest/usage.html"></a>, 2025年10月9日参照.</li><li>Page | Playwright Python#page-pdf, <a class="asis" href="https://playwright.dev/python/docs/api/class-page?#page-pdf"></a>, 2025年10月9日参照.</li>
+</ol>
+
+
 <h2>Jupyter Notebook を HTML 経由で PDF に変換するスクリプトの例 (Playwright 使用)</h2>
 以下のスクリプトにノートブックのパスを指定し <code class="language-">python nb2pdf.py aaa/bbb/ccc.ipynb</code> と実行すると aaa/bbb/tmp.html を経由して aaa/bbb/ccc.pdf にする。<a href="https://pypi.org/project/playwright/">Playwright for Python</a> と <a href="https://pypi.org/project/beautifulsoup4/">Beautiful Soup 4</a> が必要である。
-
 <ul>
 <li>中間 HTML への加工処理 [2a] [2b] [2c] が不要な場合は Beautiful Soup 4 は不要であり、<code class="language-python">html_path.read_text(encoding='utf8')</code> をそのまま <code class="language-python">page.set_content()</code> に渡せばよい。ただし [2a] を省くと PDF からコードをコピーした際にインデント情報が失われる。</li>
 </ul>
 <script src="https://gist.github.com/CookieBox26/835c16fb140391d49120f2cbbde69e3e.js"></script>
+
+
+<h2>脚注</h2>
+<dl class="footnote">
+<dt>TIPS1</dt>
+<dd>
+なお、この方法で LaTeX テンプレートをカスタマイズする方法は以下を参照。
+<ul>
+<li><a href="https://qiita.com/CookieBox26/items/00d4ece34240c1e9c849">Jupyter Notebook を PDF に変換するときのテンプレート修正 - Qiita</a></li>
+<li><a href="https://qiita.com/CookieBox26/items/06170d912bc018f84173">PDF 変換した Jupyter Notebook からコードをコピーするとインデントの空白がコピーできない問題への対処法 - Qiita</a></li>
+</ul>
+</dd>
+<dt>TIPS2</dt>
+<dd>
+ブラウザのヘッドレスモードによる PDF 変換については、<a href="https://qiita.com/CookieBox26/items/c73c164863fb57f63887#fn-1">こちらの Qiita 記事の脚注</a>を参照。
+</dd>
+</dl>
+
 </div>
 </main>
 </div>

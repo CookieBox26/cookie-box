@@ -5,10 +5,10 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>mecab-python3 で形態素解析する方法 - Cookiepad</title>
-<link href="../../css/style.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookie-box.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookiepad.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2025-12-25"></script>
+<link href="../../css/style.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookiepad.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2026-05-09"></script>
 </head>
 <body>
 <div class="container">
@@ -17,15 +17,18 @@
 <div id="smartphone-header"></div>
 <div class="item">
 <h1>mecab-python3 で形態素解析する方法</h1>
-<div class="categories"><a href="../categories/mecab.html">MeCab</a></div>
-<div class="summary">
-🍪この記事の内容:
+
+<div class="categories">
+<a href="../categories/mecab.html">MeCab</a>
+</div>
+<div class="gray cookie">
+この記事の内容:
 <ul>
 <li>mecab-python3 で形態素解析する。</li>
 </ul>
 </div>
-
 日本語文章を形態素解析する (意味を持つ最小単位に分割し品詞をタグ付けする) ソフトウェアの一つに MeCab [1] があるが、MeCab には Python ラッパー mecab-python3 [2] もあり Python からの利用も便利である。mecab-python3 は MeCab の厳密なラッパーなので、出力をカスタマイズしたいときなどは MeCab 本体のマニュアルを参照するとよい。
+
 
 <h2>参考文献</h2>
 <ol class="ref small">
@@ -42,6 +45,8 @@
 <li>辞書が UniDic の場合に MeCab から取得できる形態素の特徴がある。辞書が UniDic でなく IPADIC や JUMAN の場合のフィールドも上記サイト内の別ページにある。</li>
 </ul>
 </ol>
+
+
 <h2>形態素解析する (形態素の表層文字列のみ取得する)</h2>
 文章を分割するだけであれば、出力フォーマットをわかち書き [1] (の 1.) として形態素間に空白を挿入し、必要に応じて <code class="language-">.split()</code> すればよい。
 <pre class="language-python"><code>
@@ -74,10 +79,12 @@ if __name__ == '__main__':
     s = 'ヒンメルはもういないじゃない'
     print(parser.parse(s))
 </code></pre>
+
+
 <h2>形態素解析する (形態素の特徴も取得する)</h2>
 各形態素の表層文字列だけでなく、品詞や基本形や読みなどの形態素自体の特徴や、分割するにあたって用いられた生起コストや連接コストなどの特徴がほしいこともある。
 <ul>
-<li>前者の形態素自体の特徴については、何が取得できるかは辞書に依存する。UniDic の場合に取得できるフィールドは参考文献 [3] にある (配布元の国語研コーパスポータルを参照するべきだが、この記事を書いている2025年10月12日現在、不明な原因で手元からアクセスできない)。
+<li>前者の形態素自体の特徴については、何が取得できるかは辞書に依存する。UniDic の場合に取得できるフィールドは参考文献 [3] にある。
 </li>
 <li>後者の分割時の特徴はマニュアル [1] (の 1.) に詳しい。</li>
 </ul>
@@ -126,6 +133,7 @@ node-format-hoge = %m, %f[0], %f[1], %f[2], %f[3], %c, %pC, %pc\n
 bos-format-hoge = &lt;BOS&gt;, , , , , %c, 0, %pc\n
 eos-format-hoge = &lt;EOS&gt;, , , , , %c, %pC, %pc
 </code></pre>
+
 </div>
 </main>
 </div>

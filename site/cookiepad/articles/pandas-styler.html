@@ -5,11 +5,11 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>Pandas データフレームの見た目をカスタマイズする方法 (ケース別) - Cookiepad</title>
-<link href="../../css/style.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookie-box.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookiepad.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
+<link href="../../css/style.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookiepad.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
 <link href="../../css/jupyter.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
-<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2025-12-25"></script>
+<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2026-05-09"></script>
 </head>
 <body>
 <div class="container">
@@ -18,14 +18,15 @@
 <div id="smartphone-header"></div>
 <div class="item">
 <h1>Pandas データフレームの見た目をカスタマイズする方法 (ケース別)</h1>
+
 <div class="categories">
 <a href="../categories/pandas.html">Pandas</a>, 
 <a href="../categories/jupyter-notebook.html">Jupyter Notebook</a>
 </div>
-<div class="summary">
-🍪この記事の内容:
+<div class="gray cookie">
+この記事の内容:
 <ul>
-<li>pandas.DataFrame を Jupyter Notebook 上で表示する (その他 HTML 化する) とき、セルの背景色や文字色や数値フォーマットなどをカスタマイズする。具体的に、</li>
+<li>pandas.DataFrame を Jupyter Notebook 上で表示するとき (それ以外でも HTML 化するとき)、セルの背景色や文字色や数値フォーマットなどをカスタマイズする。具体的に、</li>
 <ul>
 <li>表全体 / 指定の列全体 / 指定の行全体にスタイルを適用する (Styler.set_table_styles, set_properties, format)。</li>
 <li>そのセルの値のみに応じたスタイルを適用する (Styler.map)。</li>
@@ -36,14 +37,16 @@
 </ul>
 </ul>
 </div>
-
 pandas.DataFrame を Jupyter Notebook 上で表示する (その他 HTML 化する) とき、値が 1 位のセルを目立たせるなど見た目をカスタマイズしたいことがある。このようなときは、<code class="language-python">.style</code> でスタイルシートを操作できるオブジェクト (pandas.io.formats.style.Styler) を取得し、これをカスタマイズして表示すると便利である。以下、ケース別の使用例を示す。
+
 
 <h2>参考文献</h2>
 <ol class="ref small">
 <li>pandas.io.formats.style.Styler — pandas 2.3.2 documentation, <a class="asis" href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.html"></a>, 2025年9月26日参照.</li>
 <li>詳細度 - CSS: カスケーディングスタイルシート | MDN, <a class="asis" href="https://developer.mozilla.org/ja/docs/Web/CSS/CSS_cascade/Specificity"></a>, 2025年10月2日参照.</li>
 </ol>
+
+
 <h2>[参考] そのまま表示する</h2>
 Jupyter Notebook 上でデータフレームを表示すると以下のように右揃え・偶数行グレーになる (スタイルは大まかに真似たもので、Jupyter Notebook のバージョンにもよると思われる)。df.to_html() を別の HTML に埋め込む場合はそちらでの規定のテーブルスタイルによる。
 <pre class="language-python"><code>
@@ -102,6 +105,8 @@ display(HTML(df.to_html()))
 </tbody>
 </table>
 </div>
+
+
 <h2>表全体 / 指定の列全体 / 指定の行全体にスタイルを適用する (Styler.set_table_styles, set_properties, format)</h2>
 
 セルの値によらないスタイルの適用は <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.set_table_styles.html">set_table_styles</a> を利用すると可読性がよいと思われる。列に関しては <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.set_properties.html">set_properties</a> を利用すると列名で指定できる。数値列のフォーマットは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.format.html">format</a> で可能である。
@@ -181,6 +186,8 @@ display(HTML(styled.to_html()))
 </tbody>
 </table>
 </div>
+
+
 <h2>そのセルの値のみに応じたスタイルを適用する (Styler.map)</h2>
 
 セルの値に応じてスタイルを適用したいこともある。そのセルの値のみに応じたスタイルを適用するときは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.map.html">map</a> を使う。「セルの値を受け取ってスタイルを返す関数」を用意し、適用する列範囲・行範囲と共に渡せばよい。
@@ -191,12 +198,12 @@ display(HTML(styled.to_html()))
 <li><code class="language-python">.map(subset=([1, 2], ['Model A Loss', 'Model B Loss']), func=_func)</code></li>
 </ul>
 </ul>
-<ul>
-<li class="doughnut">なお、set_table_styles でスタイル適用済みのセルに map で同じ CSS プロパティを適用すると set_table_styles が優先されてしまう (詳細度の関係であり、詳しくは参考文献を参照)。この場合は map で適用するスタイルに !important を付ける必要がある。</li>
+<div class="yellow warning">
+なお、set_table_styles でスタイル適用済みのセルに map で同じ CSS プロパティを適用すると set_table_styles が優先されてしまう (詳細度の関係であり、詳しくは参考文献 [2] を参照)。この場合は map で適用するスタイルに <code class="language-python">!important</code> を付ける必要がある。
 <ul>
 <li>例えば下記の例では map で文字色を指定しているが、これは set_table_styles と競合していない。もし競合していたら <code class="language-python">'color: blue !important;'</code> とする必要がある。</li>
 </ul>
-</ul>
+</div>
 <pre class="language-python"><code>
 from IPython.display import HTML, display
 import pandas as pd
@@ -263,12 +270,15 @@ display(HTML(styled.hide(axis=0).to_html()))
 </tbody>
 </table>
 </div>
+
+
 <h2>その行 (列) の値の配列に応じてその行 (列) にスタイルを適用する (Styler.apply)</h2>
 
 そのセルの値のみでなく、同じ行 (列) の値にも応じてスタイルを適用したいこともある。このときは <a href="https://pandas.pydata.org/docs/dev/reference/api/pandas.io.formats.style.Styler.apply.html">apply</a> を使う。例えば行ごとに適用するなら、「行を受け取ってその要素数のスタイルの配列を返す関数」を用意し、適用する列範囲と共に渡せばよい (引数 axis=1 も必要)。列ごとでも同様 (こちらは axis=0)。
 <ul>
 <li>apply 自体はテーブルを受け取ることもできる (axis=None)。</li>
 </ul>
+
 <h3>例. 行ごとの 1 位と 2 位を目立たせる</h3>
 
 以下の関数 _highlight(row) はデータフレームの行を受け取り、値の降順の順位の列とし、さらに順位に応じた背景色の列として返す。なお、set_table_styles でもセル背景色を適用しているため !important が必要である (前述)。
@@ -347,6 +357,7 @@ display(HTML(styled.hide(axis=0).to_html()))
 <div class="jupyter">
 </div>
 -->
+
 </div>
 </main>
 </div>

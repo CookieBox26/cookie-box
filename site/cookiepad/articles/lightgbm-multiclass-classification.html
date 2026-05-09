@@ -5,11 +5,11 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
 <title>LightGBM で多クラス分類する方法 - Cookiepad</title>
-<link href="../../css/style.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookie-box.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
-<link href="../../css/cookiepad.css?v=2025-12-25" rel="stylesheet" type="text/css"/>
+<link href="../../css/style.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookie-box.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
+<link href="../../css/cookiepad.css?v=2026-05-09" rel="stylesheet" type="text/css"/>
 <link href="../../css/jupyter.css?v=2025-10-18" rel="stylesheet" type="text/css"/>
-<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2025-12-25"></script>
+<script data-link-top="true" data-prism-python="true" defer="true" id="app" src="../../funcs.js?v=2026-05-09"></script>
 </head>
 <body>
 <div class="container">
@@ -18,23 +18,33 @@
 <div id="smartphone-header"></div>
 <div class="item">
 <h1>LightGBM で多クラス分類する方法</h1>
-<div class="categories"><a href="../categories/lightgbm.html">LightGBM</a></div>
-<div class="summary">
-🍪この記事の内容:
+
+<div class="categories">
+<a href="../categories/lightgbm.html">LightGBM</a>
+</div>
+<div class="yellow warning">
+現在この記事は最新の情報に更新されていません。最新の情報は以下の記事を参照ください。<br/>
+<a href="https://cookie-box.hatenablog.com/entry/2025/12/29/040646">LightGBM で多クラス分類をするときのゲインの話 - クッキーの日記</a>
+</div>
+<div class="gray cookie">
+この記事の内容:
 <ul>
 <li>LightGBM (Scikit-learn API) で多クラス分類する。</li>
 <ul>
-<li class="chocolate">このとき、デフォルトでは各サンプルを真クラスと予測する確率の対数の和を最小化するような分岐及び分岐後スコア割り当てが目指される。ただし、分岐位置の探索時にこの損失を厳密に計算するのではなく、その分岐でサンプルたちを分けてそれぞれスコアを調整した場合の損失改善幅を 2 次までのテイラー展開で近似し (split_gain)、split_gain が最大の分岐を選択する。</li>
+<li class="gray">このとき、デフォルトでは各サンプルを真クラスと予測する確率の対数の和を最小化するような分岐及び分岐後スコア割り当てが目指される。ただし、分岐位置の探索時にこの損失を厳密に計算するのではなく、その分岐でサンプルたちを分けてそれぞれスコアを調整した場合の損失改善幅を 2 次までのテイラー展開で近似し (split_gain)、split_gain が最大の分岐を選択する。</li>
 </ul>
 </ul>
 </div>
+
+
 <h2>参考文献</h2>
 <ol class="ref small">
 <li>lightgbm.LGBMClassifier — LightGBM 4.6.0.99 documentation#lightgbm-lgbmclassifier, <a class="asis" href="https://lightgbm.readthedocs.io/en/latest/pythonapi/lightgbm.LGBMClassifier.html#lightgbm-lgbmclassifier"></a>, 2025年12月25日参照.</li>
 <li>LightGBM: Fast Gradient Boosting with Leaf-wise Tree Growth - Complete Guide with Math Formulas &amp; Python Implementation - Interactive | Michael Brenndoerfer | Michael Brenndoerfer, <a class="asis" href="https://mbrenndoerfer.com/writing/lightgbm-fast-gradient-boosting-leaf-wise-tree-growth-complete-guide-mathematical-foundations-python-implementation"></a>, 2025年12月25日参照.</li>
 <li>microsoft/LightGBM: A fast, distributed, high performance gradient boosting (GBT, GBDT, GBRT, GBM or MART) framework based on decision tree algorithms, used for ranking, classification and many other machine learning tasks., <a class="asis" href="https://github.com/microsoft/LightGBM"></a>, 2025年12月25日参照.</li>
-
 </ol>
+
+
 <h2>iris データセットの 3 クラス分類</h2>
 Scikit-learn から iris データセットを取得し、うち 60% (90 サンプル) を訓練データに、40% (60 サンプル) を評価データ兼テストデータにして学習した例が以下である。なお、わかりやすさのために葉の枚数をあえて制限していることに留意。
 <ul>
@@ -147,6 +157,8 @@ macro avg         0.983   0.981     0.982     60.0
 weighted avg      0.984   0.983     0.983     60.0
 # リロードしても評価指標は同じなので略
 </code></pre>
+
+
 <h2>[参考] LightGBM の多クラス分類の目的関数について</h2>
 
 これ以降、わかりやすさのために 1 本の木の葉の枚数を 2 枚に絞り (1 回の分岐のみ)、学習率を 1 にし、1 ラウンドで学習を止める。このときの結果は以下である。recall をみると、セトーサは 23 サンプル中 1 サンプル、バーシカラーは 19 サンプル中 2 サンプル、バージニカは 18 サンプル中 1 サンプルの検出が漏れている。さらに presision をみると、検出が漏れたセトーサとバージニカはバーシカラーに、検出が漏れたバーシカラーはバージニカに誤分類されている。

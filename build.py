@@ -5,58 +5,74 @@
 # ]
 # [tool.uv.sources.cookies_site_utils]
 # git = "https://github.com/CookieBox26/cookies-site-utils"
-# rev = "7a25c9d6e466867d3c90bd403c67e2fdc4cfa965"
+# rev = "802b7c4960132b4d9080dab0cd1a9a482a5c5389"
 # ///
+from cookies_site_utils.resources import sync_resource
+from cookies_site_utils.builder \
+    import build_index, IndexPage, find_disallowed, Sitemap, Page
 from pathlib import Path
+import argparse
 import subprocess
-from cookies_site_utils import index_generation, IndexPage, Sitemap, validate
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', '--force_keep_timestamp', action='store_true')
+    args = parser.parse_args()
+
     work_root = Path(__file__).resolve().parent
     site_root = work_root / 'site'
-    style_css = site_root / 'css/style.css'
-    funcs_js = site_root / 'funcs.js'
     last_counts_path = work_root / '.last_counts.toml'
     domain = 'https://cookie-box.info/'
 
-    with index_generation(
-        site_root, style_css, funcs_js, last_counts_path, domain,
-        force_keep_timestamp=False,  # CSS, JS のメンテナンスだけで記事内容の更新がない時 True に
+    sync_resource(site_root / 'css/style.css')
+    sync_resource(site_root / 'funcs.js')
+
+    with build_index(
+        site_root, last_counts_path, domain=domain,
+        force_keep_timestamp=args.force_keep_timestamp,
     ):
-        # クッキパッドインデックスページ生成
         subsite_root = site_root / 'cookiepad'
-        index_cookiepad = IndexPage(subsite_root)
-        index_cookiepad.build(work_root / 'templates/cookiepad', 'Cookiepad')
-        validate(subsite_root, ['index.html'], ['articles', 'categories'])
-
-        # クッキペディアインデックスページ生成
-        # subsite_root = site_root / 'cookipedia'
-        # index_cookipedia = IndexPage(subsite_root)
-        # index_cookipedia.build(work_root / 'templates/cookipedia', 'Cookipedia β-version')
-        # validate(subsite_root, ['index.html'], ['articles', 'categories'])
-
-        # 総合インデックスページ作成
-        site_name = 'Cookie Box'
-        index_ = IndexPage(site_root)
-        index_.eval(site_name)
-        validate(
-            site_root,
-            ['index.html', 'funcs.js', 'robots.txt', 'sitemap.xml'],
-            ['css', 'cookiepad', 'cookipedia'],
+        index_cookiepad = IndexPage(
+            subsite_root,
+            work_root / 'templates/cookiepad',
+            'Cookiepad',
         )
-        validate(
-            site_root / 'css',
-            ['style.css', 'cookie-box.css', 'cookiepad.css', 'cookipedia.css', 'jupyter.css'],
-            [],
-        )
+        find_disallowed(subsite_root, allowlist=[
+            'index.html',
+            'articles/*.html',
+            'categories/*.html',
+        ])
 
-        # サイトマップ生成
+        find_disallowed(site_root, allowlist=[
+            'robots.txt',
+            'sitemap.xml',
+            'index.html',
+            'funcs.js',
+            'css/style.css',
+            'css/cookie-box.css',
+            'css/cookiepad.css',
+            'css/cookipedia.css',
+            'css/jupyter.css',
+            'cookiepad/*',
+            'cookipedia/*',
+        ])
+        index_ = Page(site_root / 'index.html')
+        index_.eval()
         Sitemap(
-            [index_] + index_cookiepad.get_pages()  # + index_cookipedia.get_pages()
+            [index_] + index_cookiepad.get_pages()
         )
 
-    # ローカルと HEAD に差分がないことの確認
+        targets = set()
+        for rel_path in Page.last_counts.keys():
+            if not (site_root / rel_path).is_file():
+                logging.info('Not exist: ' + rel_path)
+                targets.add(rel_path)
+        Page.last_counts = {
+            k: v for k, v in Page.last_counts.items()
+            if k not in targets
+        }
+
     _run = lambda command: subprocess.run(command, capture_output=True, text=True, check=True)
     ret = _run(['git', 'status', '-s']).stdout.rstrip('\n')
     if ret != '':
